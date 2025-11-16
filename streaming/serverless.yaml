@@ -1,0 +1,141 @@
+service: websocket-api
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  environment:
+    WEBSOCKETS_TABLE: ${self:custom.tables.websockets}
+    USERS_TABLE: ${cf:auth-api-dev.auth-UsersTable}
+    INCIDENTS_TABLE: ${cf:auth-api-dev.auth-IncidentsTable}
+    TOKENS_TABLE: ${cf:auth-api-dev.auth-TokensTable}
+    API_GATEWAY_ENDPOINT:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: WebsocketsApi
+          - .execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+        - dynamodb:GetItem
+        - dynamodb:Scan
+        - dynamodb:Query
+      Resource:
+        - ${self:custom.tableArns.websockets}
+
+    - Effect: Allow
+      Action:
+        - execute-api:ManageConnections
+      Resource: "*"
+
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeStream
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:ListStreams
+      Resource:
+        - ${self:custom.streamArns.users}
+        - ${self:custom.streamArns.incidents}
+        - ${self:custom.streamArns.tokens}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+
+  tables:
+    websockets: WebsocketConnections-${self:custom.stage}
+
+  tableArns:
+    websockets:
+      Fn::GetAtt:
+        - WebsocketConnectionsTable
+        - Arn
+
+  # Streams imported from the Auth API
+  streamArns:
+    users: ${cf:auth-api-dev.UsersTableStreamArn}
+    incidents: ${cf:auth-api-dev.IncidentsTableStreamArn}
+    tokens: ${cf:auth-api-dev.TokensTableStreamArn}
+
+functions:
+  onConnect:
+    handler: streaming/onConnect.handler
+    events:
+      - websocket:
+          route: $connect
+
+  onDisconnect:
+    handler: streaming/onDisconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+
+  notify:
+    handler: streaming/notify.handler
+    # Three stream triggers: users, incidents, tokens
+    events:
+      - stream:
+          type: dynamodb
+          arn: ${self:custom.streamArns.users}
+      - stream:
+          type: dynamodb
+          arn: ${self:custom.streamArns.incidents}
+      - stream:
+          type: dynamodb
+          arn: ${self:custom.streamArns.tokens}
+
+resources:
+  Resources:
+    WebsocketsApi:
+      Type: AWS::ApiGatewayV2::Api
+      Properties:
+        Name: websocket-api
+        ProtocolType: WEBSOCKET
+        RouteSelectionExpression: "$request.body.action"
+
+    WebsocketConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tables.websockets}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+
+    # Permissions for API Gateway routes → Lambda
+    OnConnectPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: ${self:service}-dev-onConnect
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+
+    OnDisconnectPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: ${self:service}-dev-onDisconnect
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+
+    NotifyPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: ${self:service}-dev-notify
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+
+  Outputs:
+    WebsocketConnectionsTable:
+      Value: ${self:custom.tables.websockets}
+      Export:
+        Name: websocket-ConnectionsTable
