@@ -4,15 +4,14 @@ from _utils import users_table
 
 
 def lambda_handler(event, context):
-    user_id = None
-    path_params = event.get("pathParameters") or {}
-    user_id = path_params.get("id") or (event.get("queryStringParameters") or {}).get(
-        "id"
-    )
+    tenant = event["tenant"]
+    user_id = event["id"]
+    if not tenant:
+        return {"statusCode": 400, "body": json.dumps({"message": "tenant required"})}
     if not user_id:
         return {"statusCode": 400, "body": json.dumps({"message": "id required"})}
     try:
-        resp = users_table.get_item(Key={"id": user_id})
+        resp = users_table.get_item(Key={"tenant": tenant, "id": user_id})
         item = resp.get("Item")
         if not item:
             return {"statusCode": 404, "body": json.dumps({"message": "not found"})}

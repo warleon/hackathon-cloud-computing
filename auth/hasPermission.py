@@ -1,5 +1,6 @@
 # hasPermission.py
 from typing import Dict, Any, Callable, Optional
+from _utils import users_table
 
 Action = str  # "view" | "create" | "update" | "delete"
 Role = str  # "reporter" | "admin" | "attendant"
@@ -20,11 +21,11 @@ ROLES = {
         "incidents": {"view": True, "create": True, "update": True, "delete": True},
     },
     "attendant": {
-        "users": {"view": True, "create": False, "update": False, "delete": False},
+        # "users": {"view": True, "create": False, "update": False, "delete": False},
         "incidents": {"view": True, "create": False, "update": True, "delete": False},
     },
     "reporter": {
-        "users": {"view": False, "create": False, "update": False, "delete": False},
+        # "users": {"view": False, "create": False, "update": False, "delete": False},
         "incidents": {
             "view": True,
             "create": True,
@@ -32,6 +33,7 @@ ROLES = {
             "delete": _creator_matches,
         },
     },
+    "user": {"tokens": {"create": True, "delete": True}},
 }
 
 
@@ -69,3 +71,32 @@ def has_permission(
             except Exception:
                 continue
     return False
+
+
+def lambda_handler(event, context):
+    token = event.get("headers", {}).get("authorization")
+    token_prefix = "Bearer "
+    if token.startswith(token_prefix):
+        token = token[len(token_prefix) :]
+
+    # get user by token
+
+
+def allow(principal_id, resource):
+    return generate_policy(principal_id, "Allow", resource)
+
+
+def deny(principal_id):
+    return generate_policy(principal_id, "Deny", principal_id)
+
+
+def generate_policy(principal_id, effect, resource):
+    return {
+        "principalId": principal_id,
+        "policyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {"Action": "execute-api:Invoke", "Effect": effect, "Resource": resource}
+            ],
+        },
+    }

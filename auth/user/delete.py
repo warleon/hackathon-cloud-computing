@@ -4,7 +4,7 @@ from _utils import users_table
 
 
 def lambda_handler(event, context):
-    user_id = (event.get("pathParameters") or {}).get("id")
+    user_id = event["id"]
     if not user_id:
         return {"statusCode": 400, "body": json.dumps({"message": "id required"})}
     try:

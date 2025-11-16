@@ -49,7 +49,7 @@ def lambda_handler(event, context):
         "email": email,
         "passwordHash": password_hash,
         "salt": salt,
-        "roles": ["admin"],
+        "roles": ["user", "admin"],
         "createdAt": now,
         "updatedAt": now,
     }
