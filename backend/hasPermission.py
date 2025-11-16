@@ -13,11 +13,6 @@ STAGE = os.environ.get("STAGE", "")
 PermissionCheck = Callable[[User, Any], bool]
 
 
-# ROLES mapping: similar to TS version
-def _creator_matches(user: User, data: Any) -> bool:
-    return user.get("id") == data.get("creator")
-
-
 ROLES = {
     "admin": {
         "users": {"view": True, "create": True, "update": True, "delete": True},
