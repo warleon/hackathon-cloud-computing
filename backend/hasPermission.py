@@ -35,17 +35,17 @@ ROLES = {
 }
 
 ARN_ACTION = {
-    "/POST/auth/token/delete": ("tokens", "delete"),
-    "/POST/auth/user/create": ("users", "create"),
-    "/POST/auth/user/get": ("users", "view"),
-    "/POST/auth/user/list": ("users", "view"),
-    "/PUT/auth/user/update": ("users", "update"),
-    "/POST/auth/user/delete": ("users", "delete"),
-    "/POST/incident/create": ("incidents", "create"),
-    "/POST/incident/get": ("incidents", "view"),
-    "/POST/incident/list": ("incidents", "view"),
-    "/PUT/incident/update": ("incidents", "update"),
-    "/POST/incident/delete": ("incidents", "delete"),
+    "/POST/auth/token/delete/": ("tokens", "delete"),
+    "/POST/auth/user/create/": ("users", "create"),
+    "/POST/auth/user/get/": ("users", "view"),
+    "/POST/auth/user/list/": ("users", "view"),
+    "/PUT/auth/user/update/": ("users", "update"),
+    "/POST/auth/user/delete/": ("users", "delete"),
+    "/POST/incident/create/": ("incidents", "create"),
+    "/POST/incident/get/": ("incidents", "view"),
+    "/POST/incident/list/": ("incidents", "view"),
+    "/PUT/incident/update/": ("incidents", "update"),
+    "/POST/incident/delete/": ("incidents", "delete"),
 }
 
 
