@@ -5,6 +5,13 @@ export const URL_BASE =
 const ENV = "dev";
 
 export const ENDPOINTS = {
-  LOGIN: `${URL_BASE}/${ENV}/auth/token/create/`,
-  LOGOUT: `${URL_BASE}/${ENV}/auth/token/delete/`,
+  LOGIN: { url: `${URL_BASE}/${ENV}/auth/token/create/`, method: "POST" },
+  LOGOUT: { url: `${URL_BASE}/${ENV}/auth/token/delete/`, method: "POST" },
+  USER: {
+    CREATE: { url: `${URL_BASE}/${ENV}/auth/user/create`, method: "POST" },
+    UPDATE: { url: `${URL_BASE}/${ENV}/auth/user/update`, method: "POST" },
+    DELETE: { url: `${URL_BASE}/${ENV}/auth/user/delte`, method: "POST" },
+    GET: { url: `${URL_BASE}/${ENV}/auth/user/get`, method: "POST" },
+    LIST: { url: `${URL_BASE}/${ENV}/auth/user/list`, method: "POST" },
+  },
 };

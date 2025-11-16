@@ -47,7 +47,7 @@ functions:
     handler: user/create.lambda_handler
     events:
       - http:
-          path: auth/user
+          path: auth/user/create
           method: post
           cors: true
           authorizer:
@@ -58,7 +58,7 @@ functions:
     handler: user/get.lambda_handler
     events:
       - http:
-          path: auth/user
+          path: auth/user/get
           method: post
           cors: true
           authorizer:
@@ -69,8 +69,8 @@ functions:
     handler: user/list.lambda_handler
     events:
       - http:
-          path: auth/user
-          method: get
+          path: auth/user/list
+          method: post
           cors: true
           authorizer:
             name: customAuthorizer
@@ -80,7 +80,7 @@ functions:
     handler: user/update.lambda_handler
     events:
       - http:
-          path: auth/user/{id}
+          path: auth/user/update
           method: put
           cors: true
           authorizer:
@@ -91,8 +91,8 @@ functions:
     handler: user/delete.lambda_handler
     events:
       - http:
-          path: auth/user/{id}
-          method: delete
+          path: auth/user/delete
+          method: post
           cors: true
           authorizer:
             name: customAuthorizer
