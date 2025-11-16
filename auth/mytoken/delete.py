@@ -5,6 +5,7 @@ from _utils import tokens_table, split_token
 
 
 def lambda_handler(event, context):
+    print(event)
     body = event.get("body")
     if isinstance(body, str):
         body = json.loads(body)

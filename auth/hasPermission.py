@@ -74,6 +74,7 @@ def has_permission(
 
 
 def lambda_handler(event, context):
+    print(event)
     token = event.get("headers", {}).get("authorization")
     token_prefix = "Bearer "
     if token.startswith(token_prefix):
