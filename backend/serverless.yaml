@@ -10,6 +10,7 @@ provider:
   environment:
     USERS_TABLE: ${self:service}-users-${sls:stage}
     TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
+    INCIDENTS_TABLE: ${self:service}-incidents-${sls:stage}
     STAGE: ${sls:stage}
 
 package:
@@ -154,6 +155,101 @@ functions:
             name: customAuthorizer
             identitySource: method.request.header.Authorization
 
+  incident-create:
+    handler: incidents/create.lambda_handler
+    events:
+      - http:
+          path: incident/create
+          method: post
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
+          authorizer:
+            name: customAuthorizer
+            identitySource: method.request.header.Authorization
+
+  incident-get:
+    handler: incidents/get.lambda_handler
+    events:
+      - http:
+          path: incident/get
+          method: post
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
+          authorizer:
+            name: customAuthorizer
+            identitySource: method.request.header.Authorization
+
+  incident-list:
+    handler: incidents/list.lambda_handler
+    events:
+      - http:
+          path: incident/list
+          method: post
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
+          authorizer:
+            name: customAuthorizer
+            identitySource: method.request.header.Authorization
+
+  incident-update:
+    handler: incidents/update.lambda_handler
+    events:
+      - http:
+          path: incident/update
+          method: put
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
+          authorizer:
+            name: customAuthorizer
+            identitySource: method.request.header.Authorization
+
+  incident-delete:
+    handler: incidents/delete.lambda_handler
+    events:
+      - http:
+          path: incident/delete
+          method: post
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
+          authorizer:
+            name: customAuthorizer
+            identitySource: method.request.header.Authorization
+
 resources:
   Resources:
     UsersTable:
@@ -190,6 +286,22 @@ resources:
         TimeToLiveSpecification:
           AttributeName: expiresAt
           Enabled: true
+
+    IncidentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.INCIDENTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: tenant
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tenant
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
 
     GatewayResponseDefault4XX:
       Type: "AWS::ApiGateway::GatewayResponse"

@@ -1,7 +1,7 @@
 # user/create.py
 import json
 import os
-from _utils import users_table, hash_password, now_iso
+from _utils import users_table, hash_password, now_iso, CORS_HEADERS
 
 
 def lambda_handler(event, context):
@@ -17,6 +17,7 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "body": json.dumps({"message": "tenant, email and password required"}),
+            "headers": CORS_HEADERS,
         }
 
     user_id = email  # as in your TS, id is duplicate of email
@@ -42,9 +43,10 @@ def lambda_handler(event, context):
         safe_user = {
             k: v for k, v in user_item.items() if k not in ("passwordHash", "salt")
         }
-        return {"statusCode": 201, "body": json.dumps(safe_user)}
+        return {"statusCode": 201, "body": json.dumps(safe_user), "headers": CORS_HEADERS}
     except Exception as e:
         return {
             "statusCode": 400,
             "body": json.dumps({"message": "could not create user", "error": str(e)}),
+            "headers": CORS_HEADERS,
         }
