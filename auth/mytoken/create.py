@@ -15,6 +15,7 @@ DEFAULT_TTL_SECONDS = int(
 
 
 def lambda_handler(event, context):
+    print(event)
     tenant = event["tenant"]
     email = event["email"]
     password = event["password"]
