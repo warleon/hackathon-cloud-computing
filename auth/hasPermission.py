@@ -29,17 +29,12 @@ ROLES = {
     },
     "reporter": {
         # "users": {"view": False, "create": False, "update": False, "delete": False},
-        "incidents": {
-            "view": True,
-            "create": True,
-            "update": _creator_matches,
-            "delete": _creator_matches,
-        },
+        "incidents": {"view": True, "create": True, "update": False, "delete": False},
     },
     "user": {"tokens": {"delete": True}},
 }
 
-ARN_ACTION = {"POST/auth/token/delete": "tokens:delete"}
+ARN_ACTION = {"POST/auth/token/delete": ("tokens", "delete")}
 
 
 def has_permission(
@@ -87,33 +82,32 @@ def lambda_handler(event, context):
     if token.startswith(token_prefix):
         token = token[len(token_prefix) :]
 
-    action = arn.split(STAGE, 1)[1]
+    arn_end = arn.split(STAGE, 1)[1]
+    resource, action = ARN_ACTION[arn_end]
 
     data = get_token_data(token)
-    allowed = has_permission(
-        data.get("user"),
-        action,
-    )
+    allowed = has_permission(data.get("user"), resource, action)
 
     if allowed:
-        allow()
+        return generate_policy(token, "Allow", arn)
 
-
-def allow(principal_id, resource):
-    return generate_policy(principal_id, "Allow", resource)
-
-
-def deny(principal_id):
-    return generate_policy(principal_id, "Deny", principal_id)
+    raise Exception("Unauthorized")
 
 
 def generate_policy(principal_id, effect, resource):
-    return {
-        "principalId": principal_id,
-        "policyDocument": {
+    """
+    Generates an IAM policy document for API Gateway.
+    """
+    auth_response = {}
+    auth_response["principalId"] = principal_id
+
+    if effect and resource:
+        policy_document = {
             "Version": "2012-10-17",
             "Statement": [
                 {"Action": "execute-api:Invoke", "Effect": effect, "Resource": resource}
             ],
-        },
-    }
+        }
+        auth_response["policyDocument"] = policy_document
+
+    return auth_response
