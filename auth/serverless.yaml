@@ -11,17 +11,13 @@ provider:
     USERS_TABLE: ${self:service}-users-${sls:stage}
     TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
   httpApi:
-    # Define the authorizer
-#    authorizers:
-#      customAuthorizer:
-#        type: REQUEST
-#        functionName: authorize-handler
-#        identitySource: method.request.header.Authorization
 
 package:
-  individually: true
+  #individually: true
   include:
     - "_utils.py"
+    - "token/**"
+    - "user/**"
 
 functions:
   seed:
