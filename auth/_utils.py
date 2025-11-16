@@ -9,6 +9,7 @@ from typing import Tuple
 
 USERS_TABLE = os.environ.get("USERS_TABLE", "UsersTable")
 TOKENS_TABLE = os.environ.get("TOKENS_TABLE", "TokensTable")
+INCIDENTS_TABLE = os.environ.get("INCIDENTS_TABLE", "IncidentsTable")
 
 CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
@@ -18,6 +19,7 @@ CORS_HEADERS = {
 dynamodb = boto3.resource("dynamodb")
 users_table = dynamodb.Table(USERS_TABLE)
 tokens_table = dynamodb.Table(TOKENS_TABLE)
+incidents_table = dynamodb.Table(INCIDENTS_TABLE)
 
 
 # Password hashing using PBKDF2-HMAC-SHA256
