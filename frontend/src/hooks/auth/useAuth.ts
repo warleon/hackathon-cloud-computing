@@ -4,6 +4,7 @@ import axios from "axios";
 
 import { ENDPOINTS } from "@/lib/constants";
 import { type User } from "@/lib/auth_types";
+import { queryClient } from "@/lib/query-client";
 
 const TOKEN_KEY = "auth_token";
 const USER_KEY = "auth_user";
@@ -71,6 +72,7 @@ export function useAuth() {
     localStorage.removeItem(USER_KEY);
     setToken(null);
     setUser(null);
+    queryClient.clear();
 
     // Redirect to login page
     window.location.href = "/";
@@ -80,9 +82,18 @@ export function useAuth() {
   // REQUEST WRAPPER
   // ---------------------------
   const request = useCallback(
-    async (url: string, data: unknown) => {
+    async (
+      url: string,
+      data?: unknown,
+      options?: { method?: "GET" | "POST" | "PUT" | "DELETE" }
+    ) => {
+      const method = options?.method ?? "POST";
       try {
-        const res = await axios.post(url, data);
+        const res = await axios.request({
+          url,
+          method,
+          data,
+        });
         return res.data;
       } catch (err: any) {
         if (err.response?.status === 401) {

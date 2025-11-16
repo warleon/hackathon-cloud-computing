@@ -19,6 +19,12 @@ def lambda_handler(event, context):
             "headers": CORS_HEADERS,
         }
 
+    search = (body.get("search") or "").strip().lower()
+    role_filter = body.get("role")
+    status_filter = body.get("status")
+    if status_filter:
+        status_filter = status_filter.upper()
+
     default_limit = 50
     max_limit = 100
     limit_raw = body.get("pageSize") or body.get("limit")
@@ -42,12 +48,21 @@ def lambda_handler(event, context):
             "headers": CORS_HEADERS,
         }
     try:
-        scan_kwargs = {"FilterExpression": Attr("tenant").eq(tenant), "Limit": limit}
+        filter_expr = Attr("tenant").eq(tenant)
+        if role_filter and role_filter != "all":
+            filter_expr = filter_expr & Attr("roles").contains(role_filter)
+        if status_filter and status_filter != "ALL":
+            filter_expr = filter_expr & Attr("status").eq(status_filter)
+        if search:
+            filter_expr = filter_expr & Attr("searchKey").contains(search)
+
+        scan_kwargs = {"FilterExpression": filter_expr, "Limit": limit}
         if last_key:
             scan_kwargs["ExclusiveStartKey"] = last_key
 
         resp = users_table.scan(**scan_kwargs)
         items = resp.get("Items", [])
+
         response_body = {
             "items": items,
             "lastEvaluatedKey": resp.get("LastEvaluatedKey"),

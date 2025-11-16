@@ -7,6 +7,7 @@ from _utils import (
     now_iso,
     CORS_HEADERS,
     VALID_INCIDENT_STATES,
+    build_incident_search_key,
 )
 
 
@@ -20,6 +21,7 @@ def lambda_handler(event, context):
     creator = body.get("creator")
     location = body.get("location")
     media = body.get("media", "")
+    description = body.get("description", "")
     state = (body.get("state") or "PENDING").upper()
 
     if state not in VALID_INCIDENT_STATES:
@@ -50,9 +52,11 @@ def lambda_handler(event, context):
         "creator": creator,
         "location": location,
         "media": media or "",
+        "description": description or "",
         "state": state,
         "createdAt": now,
         "updatedAt": now,
+        "searchKey": build_incident_search_key(title, location, creator, description),
     }
 
     try:

@@ -10,14 +10,14 @@ export const ENDPOINTS = {
   USER: {
     CREATE: `${URL_BASE}/${ENV}/auth/user/create/`,
     UPDATE: `${URL_BASE}/${ENV}/auth/user/update/`,
-    DELETE: `${URL_BASE}/${ENV}/auth/user/delte/`,
+    DELETE: `${URL_BASE}/${ENV}/auth/user/delete/`,
     GET: `${URL_BASE}/${ENV}/auth/user/get/`,
     LIST: `${URL_BASE}/${ENV}/auth/user/list/`,
   },
   INCIDENT: {
     CREATE: `${URL_BASE}/${ENV}/incident/create/`,
     UPDATE: `${URL_BASE}/${ENV}/incident/update/`,
-    DELETE: `${URL_BASE}/${ENV}/incident/delte/`,
+    DELETE: `${URL_BASE}/${ENV}/incident/delete/`,
     GET: `${URL_BASE}/${ENV}/incident/get/`,
     LIST: `${URL_BASE}/${ENV}/incident/list/`,
   },

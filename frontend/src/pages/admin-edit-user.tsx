@@ -1,5 +1,6 @@
-import { type FormEvent, useMemo, useState } from "react";
-import { Link, useParams } from "react-router";
+﻿import { type FormEvent, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,152 +12,271 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuthContext } from "@/hooks/auth/AuthProvider";
+import { ENDPOINTS } from "@/lib/constants";
+import { type User } from "@/lib/auth_types";
 
-const USERS_MOCK = {
-  u1: {
-    name: "Mariana Torres",
-    email: "mariana@utec.edu.pe",
-    role: "Administrador",
-    status: "Activo",
-    notes: "Responsable del edificio principal.",
-  },
-  u2: {
-    name: "Carlos Díaz",
-    email: "cdiaz@utec.edu.pe",
-    role: "Operador",
-    status: "Activo",
-    notes: "Responsable turno noche.",
-  },
-} as const;
+const ROLE_OPTIONS = [
+  { label: "Administrador", value: "admin" },
+  { label: "Operador", value: "attendant" },
+  { label: "Reportador", value: "reporter" },
+];
+
+const STATUS_OPTIONS = [
+  { label: "Activo", value: "ACTIVE" },
+  { label: "Suspendido", value: "SUSPENDED" },
+];
 
 const AdminEditUserPage = () => {
-  const { userId = "u1" } = useParams();
-  const fallbackUser = USERS_MOCK[userId as keyof typeof USERS_MOCK] ?? {
-    name: "Usuario sin registrar",
-    email: "sistema@utec.edu.pe",
-    role: "Invitado",
-    status: "Activo",
+  const { userId = "" } = useParams();
+  const { user, request } = useAuthContext();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const [formState, setFormState] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
     notes: "",
-  };
+    role: "admin",
+    status: "ACTIVE",
+    password: "",
+  });
 
-  const [fullName, setFullName] = useState<string>(fallbackUser.name);
-  const [email, setEmail] = useState<string>(fallbackUser.email);
-  const [role, setRole] = useState<string>(fallbackUser.role);
-  const [status, setStatus] = useState<string>(fallbackUser.status);
-  const [notes, setNotes] = useState<string>(fallbackUser.notes);
+  const tenant = user?.tenant;
 
-  const pageTitle = useMemo(
-    () => `Editar usuario · ${fullName || "Nuevo"}`,
-    [fullName]
-  );
+  const userQuery = useQuery({
+    queryKey: ["user", tenant, userId],
+    enabled: Boolean(tenant && userId),
+    queryFn: async () => request(ENDPOINTS.USER.GET, { tenant, id: userId }),
+  });
+
+  useEffect(() => {
+    if (userQuery.data) {
+      const data = userQuery.data as User;
+      setFormState((prev) => ({
+        ...prev,
+        fullName: data.fullName ?? "",
+        email: data.email,
+        phone: data.phone ?? "",
+        notes: data.notes ?? "",
+        role: data.roles?.[0] ?? "admin",
+        status: data.status ?? "ACTIVE",
+      }));
+    }
+  }, [userQuery.data]);
+
+  const updateUser = useMutation({
+    mutationFn: async () => {
+      if (!tenant) {
+        throw new Error("No se encontró el tenant del usuario.");
+      }
+      const payload: Record<string, unknown> = {
+        tenant,
+        id: userId,
+        fullName: formState.fullName,
+        phone: formState.phone,
+        notes: formState.notes,
+        roles: [formState.role],
+        status: formState.status,
+      };
+      if (formState.password.trim()) {
+        payload.password = formState.password.trim();
+      }
+      return request(ENDPOINTS.USER.UPDATE, payload, { method: "PUT" });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user", tenant, userId] });
+      navigate("/admin/users");
+    },
+  });
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    updateUser.mutate();
   };
+
+  const isLoading = userQuery.isLoading;
+  const isDisabled =
+    !formState.fullName.trim() || updateUser.isLoading || isLoading;
 
   return (
     <div className="mx-auto max-w-4xl rounded-[2.5rem] bg-white p-8 shadow-2xl">
-        <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-3xl font-semibold text-slate-900">ALERTA UTEC</p>
-            <p className="text-xl font-medium text-slate-800">{pageTitle}</p>
-            <p className="text-sm text-slate-500">
-              Actualiza la información de contacto, rol o estado del usuario.
-            </p>
-          </div>
-          <Button
-            asChild
-            className="rounded-full border border-slate-300 bg-white px-6 py-5 text-slate-700 hover:bg-slate-50"
-          >
-            <Link to="/admin/users">Volver al listado</Link>
-          </Button>
-        </header>
+      <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="text-3xl font-semibold text-slate-900">ALERTA UTEC</p>
+          <p className="text-xl font-medium text-slate-800">
+            Editar usuario Â· {formState.fullName || "Nuevo"}
+          </p>
+          <p className="text-sm text-slate-500">
+            Actualiza la información de contacto, rol o estado del usuario.
+          </p>
+        </div>
+        <Button
+          asChild
+          className="rounded-full border border-slate-300 bg-white px-6 py-5 text-slate-700 hover:bg-slate-50"
+        >
+          <Link to="/admin/users">Volver al listado</Link>
+        </Button>
+      </header>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">
-                Nombre completo
-              </label>
-              <Input
-                className="h-12 rounded-2xl border border-slate-200"
-                value={fullName}
-                onChange={(event) => setFullName(event.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">
-                Email institucional
-              </label>
-              <Input
-                className="h-12 rounded-2xl border border-slate-200"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </div>
-          </div>
+      {userQuery.isError && (
+        <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+          No se pudo cargar la información del usuario.
+        </div>
+      )}
 
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">
-                Rol
-              </label>
-              <Select value={role} onValueChange={setRole}>
-                <SelectTrigger className="h-12 rounded-2xl border border-slate-200">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Administrador">Administrador</SelectItem>
-                  <SelectItem value="Operador">Operador</SelectItem>
-                  <SelectItem value="Supervisor">Supervisor</SelectItem>
-                  <SelectItem value="Invitado">Invitado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">
-                Estado
-              </label>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="h-12 rounded-2xl border border-slate-200">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Activo">Activo</SelectItem>
-                  <SelectItem value="Suspendido">Suspendido</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="grid gap-5 md:grid-cols-2">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">
-              Notas internas
+              Nombre completo
             </label>
-            <Textarea
-              className="min-h-[140px] rounded-3xl border border-slate-200"
-              value={notes}
-              onChange={(event) => setNotes(event.target.value)}
+            <Input
+              className="h-12 rounded-2xl border border-slate-200"
+              value={formState.fullName}
+              onChange={(event) =>
+                setFormState((prev) => ({
+                  ...prev,
+                  fullName: event.target.value,
+                }))
+              }
             />
           </div>
-
-          <div className="flex justify-end gap-3">
-            <Button
-              asChild
-              className="rounded-full border border-slate-300 bg-white px-6 py-5 text-slate-700 hover:bg-slate-100"
-              type="button"
-            >
-              <Link to="/admin/users">Cancelar</Link>
-            </Button>
-            <Button
-              className="rounded-full bg-slate-900 px-6 py-5 text-white hover:bg-slate-800"
-              type="submit"
-            >
-              Guardar cambios
-            </Button>
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-700">
+              Email institucional
+            </label>
+            <Input
+              className="h-12 rounded-2xl border border-slate-200 bg-slate-50"
+              type="email"
+              value={formState.email}
+              disabled
+            />
           </div>
-        </form>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-700">Rol</label>
+            <Select
+              value={formState.role}
+              onValueChange={(value) =>
+                setFormState((prev) => ({ ...prev, role: value }))
+              }
+            >
+              <SelectTrigger className="h-12 rounded-2xl border border-slate-200">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ROLE_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-700">
+              Estado
+            </label>
+            <Select
+              value={formState.status}
+              onValueChange={(value) =>
+                setFormState((prev) => ({ ...prev, status: value }))
+              }
+            >
+              <SelectTrigger className="h-12 rounded-2xl border border-slate-200">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-700">
+              Teléfono
+            </label>
+            <Input
+              className="h-12 rounded-2xl border border-slate-200"
+              value={formState.phone}
+              onChange={(event) =>
+                setFormState((prev) => ({
+                  ...prev,
+                  phone: event.target.value,
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-700">
+              Nueva contraseña (opcional)
+            </label>
+            <Input
+              className="h-12 rounded-2xl border border-slate-200"
+              type="password"
+              placeholder="â—â—â—â—â—â—â—â—"
+              value={formState.password}
+              onChange={(event) =>
+                setFormState((prev) => ({
+                  ...prev,
+                  password: event.target.value,
+                }))
+              }
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-slate-700">
+            Notas internas
+          </label>
+          <Textarea
+            className="min-h-[140px] rounded-3xl border border-slate-200"
+            value={formState.notes}
+            onChange={(event) =>
+              setFormState((prev) => ({
+                ...prev,
+                notes: event.target.value,
+              }))
+            }
+          />
+        </div>
+
+        {updateUser.isError && (
+          <p className="text-sm text-red-500">
+            {(updateUser.error as Error)?.message ??
+              "No se pudieron guardar los cambios."}
+          </p>
+        )}
+
+        <div className="flex justify-end gap-3">
+          <Button
+            asChild
+            className="rounded-full border border-slate-300 bg-white px-6 py-5 text-slate-700 hover:bg-slate-100"
+            type="button"
+          >
+            <Link to="/admin/users">Cancelar</Link>
+          </Button>
+          <Button
+            className="rounded-full bg-slate-900 px-6 py-5 text-white hover:bg-slate-800"
+            disabled={isDisabled}
+            type="submit"
+          >
+            {updateUser.isLoading ? "Guardando..." : "Guardar cambios"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };

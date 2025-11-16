@@ -12,6 +12,13 @@ export type User = {
   passwordHash?: string;
   salt: string;
   roles: Role[];
+  fullName?: string;
+  phone?: string;
+  notes?: string;
+  status?: string;
+  searchKey?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type Token = {

@@ -1,5 +1,5 @@
-import { type ReactElement } from "react";
-import { Link, NavLink, Navigate, Outlet } from "react-router";
+﻿import { type ReactElement } from "react";
+import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/hooks/auth/AuthProvider";
@@ -68,7 +68,7 @@ const AppNavbar = () => {
         </nav>
         <div className="flex items-center gap-3">
           <p className="hidden text-sm text-slate-600 sm:block">
-            {user?.email}
+            {user?.fullName || user?.email}
           </p>
           <Button
             className="rounded-full bg-slate-900 hover:bg-slate-800"

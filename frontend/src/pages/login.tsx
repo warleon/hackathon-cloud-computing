@@ -1,5 +1,5 @@
-import { type FormEvent, useState } from "react";
-import { useNavigate } from "react-router";
+﻿import { type FormEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,12 +50,7 @@ const LoginPage = () => {
         <form className="mt-10 space-y-6 w-full" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="tenant">Institución</Label>
-            <Input
-              id="tenant"
-              name="tenant"
-              placeholder="Ej. utec"
-              required
-            />
+            <Input id="tenant" name="tenant" placeholder="Ej. utec" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -96,3 +91,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

@@ -21,8 +21,28 @@ def lambda_handler(event, context):
         }
 
     filter_expr = Attr("tenant").eq(tenant)
+    states = body.get("states")
     state = body.get("state")
-    if state:
+    if states:
+        normalized = []
+        for item in states:
+            if not item:
+                continue
+            upper = str(item).upper()
+            if upper not in VALID_INCIDENT_STATES:
+                return {
+                    "statusCode": 400,
+                    "body": json.dumps(
+                        {
+                            "message": f"states values must be within {sorted(VALID_INCIDENT_STATES)}"
+                        }
+                    ),
+                    "headers": CORS_HEADERS,
+                }
+            normalized.append(upper)
+        if normalized:
+            filter_expr = filter_expr & Attr("state").is_in(normalized)
+    elif state:
         state_upper = state.upper()
         if state_upper not in VALID_INCIDENT_STATES:
             return {
@@ -37,6 +57,10 @@ def lambda_handler(event, context):
     creator = body.get("creator")
     if creator:
         filter_expr = filter_expr & Attr("creator").eq(creator)
+
+    search = (body.get("search") or "").strip().lower()
+    if search:
+        filter_expr = filter_expr & Attr("searchKey").contains(search)
 
     default_limit = 50
     max_limit = 100

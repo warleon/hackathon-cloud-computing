@@ -8,6 +8,8 @@ export type Incident = {
   creator: string;
   location: string;
   state: IncidentState;
+  description?: string;
   createdAt: string;
   updatedAt: string;
+  searchKey?: string;
 };
