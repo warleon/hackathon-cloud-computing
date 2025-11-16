@@ -41,7 +41,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
+            identitySource: method.request.header.Authorization
 
   user-create:
     handler: user/create.lambda_handler
@@ -52,7 +52,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
+            identitySource: method.request.header.Authorization
 
   user-get:
     handler: user/get.lambda_handler
@@ -63,7 +63,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
+            identitySource: method.request.header.Authorization
 
   user-list:
     handler: user/list.lambda_handler
@@ -74,7 +74,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
+            identitySource: method.request.header.Authorization
 
   user-update:
     handler: user/update.lambda_handler
@@ -85,7 +85,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
+            identitySource: method.request.header.Authorization
 
   user-delete:
     handler: user/delete.lambda_handler
@@ -96,7 +96,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization, method.request.header.mycustomdata
+            identitySource: method.request.header.Authorization
 
 resources:
   Resources:
