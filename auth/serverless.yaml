@@ -31,15 +31,12 @@ functions:
     handler: hasPermission.lambda_handler
 
   token-create:
-    handler: ./token/create.lambda_handler
+    handler: token.create.lambda_handler
     events:
       - http:
           path: auth/token/create
           method: post
           cors: true
-    package:
-      include:
-        - "token/**"
 
   token-delete:
     handler: token/delete.lambda_handler
