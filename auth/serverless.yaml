@@ -12,6 +12,11 @@ provider:
     TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
 
 functions:
+  seed:
+    handler: user/seed.lambda_handler
+    package:
+      include:
+        - "./_utils.py"
   token-create:
     handler: token/create.lambda_handler
     events:
