@@ -53,6 +53,7 @@ def split_token(token):
 
 def get_token(tenant, id):
     resp = tokens_table.get_item(Key={"tenant": tenant, "id": id})
+    print(resp)
     item = resp.get("Item")
     if not item:
         return None
@@ -61,4 +62,5 @@ def get_token(tenant, id):
 
 def get_token_data(token):
     tenant, id = split_token(token)
+    print(tenant, id)
     return get_token(tenant, id)
