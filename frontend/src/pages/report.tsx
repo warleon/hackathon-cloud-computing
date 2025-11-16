@@ -1,6 +1,6 @@
 import type { ChangeEvent, DragEvent, FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
-import { ChevronsUpDown, PlusCircle, UploadCloud } from "lucide-react";
+import { Camera, ChevronsUpDown, PlusCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -143,7 +143,7 @@ const ReportPage = () => {
             <span className="text-base font-semibold text-slate-800">
               Seleccionar archivo
             </span>
-            <UploadCloud className="mt-4 h-10 w-10 text-slate-800" />
+            <Camera className="mt-4 h-24 w-24 text-slate-800" />
             <p className="mt-2 text-sm text-slate-700">
               Arrastra, sube o captura multimedia
             </p>
