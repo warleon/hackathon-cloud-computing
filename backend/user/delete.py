@@ -7,7 +7,14 @@ def lambda_handler(event, context):
     body = event.get("body")
     if isinstance(body, str):
         body = json.loads(body)
-    user_id = body["id"]
+    tenant = body.get("tenant")
+    user_id = body.get("id")
+    if not tenant:
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"message": "tenant required"}),
+            "headers": CORS_HEADERS,
+        }
     if not user_id:
         return {
             "statusCode": 400,
@@ -15,7 +22,7 @@ def lambda_handler(event, context):
             "headers": CORS_HEADERS,
         }
     try:
-        users_table.delete_item(Key={"id": user_id})
+        users_table.delete_item(Key={"tenant": tenant, "id": user_id})
         return {
             "statusCode": 200,
             "body": json.dumps({"message": "deleted"}),

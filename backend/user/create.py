@@ -1,7 +1,14 @@
 # user/create.py
 import json
 import os
-from _utils import users_table, hash_password, now_iso, CORS_HEADERS
+from _utils import (
+    users_table,
+    hash_password,
+    now_iso,
+    CORS_HEADERS,
+    VALID_USER_STATUSES,
+    build_user_search_key,
+)
 
 
 def lambda_handler(event, context):
@@ -11,7 +18,19 @@ def lambda_handler(event, context):
     tenant = body["tenant"]
     email = body["email"]
     password = body["password"]
-    roles = body["roles"] if body["roles"] else []
+    roles = body.get("roles") or []
+    full_name = body.get("fullName", "")
+    phone = body.get("phone", "")
+    notes = body.get("notes", "")
+    status = (body.get("status") or "ACTIVE").upper()
+    if status not in VALID_USER_STATUSES:
+        return {
+            "statusCode": 400,
+            "body": json.dumps(
+                {"message": f"status must be one of {sorted(VALID_USER_STATUSES)}"}
+            ),
+            "headers": CORS_HEADERS,
+        }
 
     if not tenant or not email or not password:
         return {
@@ -31,8 +50,13 @@ def lambda_handler(event, context):
         "passwordHash": password_hash,
         "salt": salt,
         "roles": roles,
+        "fullName": full_name,
+        "phone": phone,
+        "notes": notes,
+        "status": status,
         "createdAt": now,
         "updatedAt": now,
+        "searchKey": build_user_search_key(full_name, email, roles, status),
     }
 
     try:
@@ -40,10 +64,7 @@ def lambda_handler(event, context):
             Item=user_item, ConditionExpression="attribute_not_exists(id)"
         )
         # don't include passwordHash/salt in response
-        safe_user = {
-            k: v for k, v in user_item.items() if k not in ("passwordHash", "salt")
-        }
-        return {"statusCode": 201, "body": json.dumps(safe_user), "headers": CORS_HEADERS}
+        return {"statusCode": 201, "body": json.dumps(user_item), "headers": CORS_HEADERS}
     except Exception as e:
         return {
             "statusCode": 400,

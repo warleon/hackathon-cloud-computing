@@ -16,6 +16,7 @@ CORS_HEADERS = {
     "Access-Control-Allow-Credentials": True,
 }
 VALID_INCIDENT_STATES = {"PENDING", "ATTENDING", "FINISHED"}
+VALID_USER_STATUSES = {"ACTIVE", "SUSPENDED"}
 
 dynamodb = boto3.resource("dynamodb")
 users_table = dynamodb.Table(USERS_TABLE)
@@ -81,3 +82,30 @@ def get_token_data(token):
     tenant, _ = split_token(token)
     print(tenant, token)
     return get_token(tenant, token)
+
+
+def build_user_search_key(
+    full_name: str | None,
+    email: str,
+    roles: list[str] | None,
+    status: str | None,
+) -> str:
+    tokens = [
+        (full_name or "").lower(),
+        email.lower(),
+        " ".join((roles or [])).lower(),
+        (status or "").lower(),
+    ]
+    return " ".join(filter(None, tokens))
+
+
+def build_incident_search_key(
+    title: str, location: str, creator: str, description: str | None = ""
+) -> str:
+    tokens = [
+        title.lower(),
+        location.lower(),
+        creator.lower(),
+        (description or "").lower(),
+    ]
+    return " ".join(filter(None, tokens))
