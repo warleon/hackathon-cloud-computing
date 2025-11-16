@@ -23,16 +23,15 @@ function App() {
             <Routes>
               <Route element={<LoginPage />} path="/" />
               <Route element={<ProtectedLayout />}>
-                <Route index element={<Navigate replace to="reports" />} />
-                <Route element={<ReportsDashboardPage />} path="reports" />
-                <Route element={<ReportPage />} path="report" />
+                <Route element={<ReportsDashboardPage />} path="/reports" />
+                <Route element={<ReportPage />} path="/report" />
                 <Route
                   element={
                     <RoleGuard roles={["admin"]}>
                       <AdminUsersListPage />
                     </RoleGuard>
                   }
-                  path="admin/users"
+                  path="/admin/users"
                 />
                 <Route
                   element={
@@ -40,7 +39,7 @@ function App() {
                       <AdminCreateUserPage />
                     </RoleGuard>
                   }
-                  path="admin/users/create"
+                  path="/admin/users/create"
                 />
                 <Route
                   element={
@@ -48,7 +47,7 @@ function App() {
                       <AdminEditUserPage />
                     </RoleGuard>
                   }
-                  path="admin/users/:userId/edit"
+                  path="/admin/users/:userId/edit"
                 />
               </Route>
               <Route element={<Navigate replace to="/reports" />} path="*" />

@@ -96,8 +96,17 @@ export function useAuth() {
         });
         return res.data;
       } catch (err: any) {
-        if (err.response?.status === 401) {
+        const status = err.response?.status;
+        if (status === 401) {
           logout(); // auto-logout if expired or invalid token
+        }
+        if (status === 403) {
+          return (
+            err.response?.data ?? {
+              statusCode: 403,
+              message: "Acceso denegado",
+            }
+          );
         }
         throw err;
       }
