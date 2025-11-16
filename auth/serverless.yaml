@@ -17,7 +17,7 @@ functions:
           method: post
           cors: true
     package:
-      includes:
+      include:
         - "./_utils.py"
 
   token-delete:
@@ -28,7 +28,7 @@ functions:
           method: post
           cors: true
     package:
-      includes:
+      include:
         - "./_utils.py"
 
   user-create:
@@ -39,7 +39,7 @@ functions:
           method: post
           cors: true
     package:
-      includes:
+      include:
         - "./_utils.py"
 
   user-get:
@@ -50,7 +50,7 @@ functions:
           method: get
           cors: true
     package:
-      includes:
+      include:
         - "./_utils.py"
 
   user-list:
@@ -61,7 +61,7 @@ functions:
           method: get
           cors: true
     package:
-      includes:
+      include:
         - "./_utils.py"
 
   user-update:
@@ -72,7 +72,7 @@ functions:
           method: put
           cors: true
     package:
-      includes:
+      include:
         - "./_utils.py"
 
   user-delete:
@@ -83,7 +83,7 @@ functions:
           method: delete
           cors: true
     package:
-      includes:
+      include:
         - "./_utils.py"
 
 resources:
