@@ -13,7 +13,7 @@ provider:
   httpApi:
 
 package:
-  #individually: true
+  individually: true
   include:
     - "_utils.py"
     - "token/**"
