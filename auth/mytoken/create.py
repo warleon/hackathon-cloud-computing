@@ -18,7 +18,7 @@ def lambda_handler(event, context):
     tenant = event["tenant"]
     email = event["email"]
     password = event["password"]
-    ttl = event["ttlSeconds"] or DEFAULT_TTL_SECONDS
+    ttl = event.get("ttlSeconds", DEFAULT_TTL_SECONDS)
 
     if not tenant or not email or not password:
         return {
