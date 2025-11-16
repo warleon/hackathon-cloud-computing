@@ -1,6 +1,6 @@
 # hasPermission.py
 from typing import Dict, Any, Callable, Optional
-from _utils import get_token_data
+from _utils import get_token_data, CORS_HEADERS
 import os
 
 Action = str  # "view" | "create" | "update" | "delete"
@@ -97,7 +97,9 @@ def lambda_handler(event, context):
 
     print("AUTHORIZED", allowed)
     if allowed:
-        return generate_policy(token, "Allow", arn)
+        response = generate_policy(token, "Allow", arn)
+        print(response)
+        return response
 
     raise Exception("Unauthorized")
 
@@ -108,10 +110,7 @@ def generate_policy(principal_id, effect, resource):
     """
     auth_response = {}
     auth_response["principalId"] = principal_id
-    auth_response["headers"] = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": True,
-    }
+    auth_response["headers"] = CORS_HEADERS
 
     if effect and resource:
         policy_document = {
