@@ -1,11 +1,14 @@
 # hasPermission.py
 from typing import Dict, Any, Callable, Optional
-from _utils import users_table
+from _utils import get_token_data
+import os
 
 Action = str  # "view" | "create" | "update" | "delete"
 Role = str  # "reporter" | "admin" | "attendant"
 Incident = Dict[str, Any]
 User = Dict[str, Any]
+
+STAGE = os.environ.get("STAGE", "")
 
 PermissionCheck = Callable[[User, Any], bool]
 
@@ -35,6 +38,8 @@ ROLES = {
     },
     "user": {"tokens": {"delete": True}},
 }
+
+ARN_ACTION = {"POST/auth/token/delete": "tokens:delete"}
 
 
 def has_permission(
@@ -75,12 +80,23 @@ def has_permission(
 
 def lambda_handler(event, context):
     print(event)
-    token = event.get("headers", {}).get("authorization")
+    token = event.get("authorizationToken")
+    arn = event.get("methodArn")
+
     token_prefix = "Bearer "
     if token.startswith(token_prefix):
         token = token[len(token_prefix) :]
 
-    # get user by token
+    action = arn.split(STAGE, 1)[1]
+
+    data = get_token_data(token)
+    allowed = has_permission(
+        data.get("user"),
+        action,
+    )
+
+    if allowed:
+        allow()
 
 
 def allow(principal_id, resource):

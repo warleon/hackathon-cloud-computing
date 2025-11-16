@@ -10,6 +10,7 @@ provider:
   environment:
     USERS_TABLE: ${self:service}-users-${sls:stage}
     TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
+    STAGE: ${sls:stage}
 
 package:
   individually: true
@@ -40,7 +41,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.header.Authorization , $request.body
 
   user-create:
     handler: user/create.lambda_handler
@@ -51,7 +52,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.header.Authorization , $request.body
 
   user-get:
     handler: user/get.lambda_handler
@@ -62,7 +63,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.header.Authorization , $request.body
 
   user-list:
     handler: user/list.lambda_handler
@@ -73,7 +74,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.header.Authorization , $request.body
 
   user-update:
     handler: user/update.lambda_handler
@@ -84,7 +85,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.header.Authorization , $request.body
 
   user-delete:
     handler: user/delete.lambda_handler
@@ -95,7 +96,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.header.Authorization, $request.body
 
 resources:
   Resources:
