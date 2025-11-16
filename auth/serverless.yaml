@@ -10,12 +10,14 @@ provider:
   environment:
     USERS_TABLE: ${self:service}-users-${sls:stage}
     TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
-  apiGateway:
-    shouldStartNameWithService: true
-    defaultAuthorizer:
-      name: authorizer
-      type: REQUEST
-      identitySource: method.request.header.Authorization
+  httpApi:
+    # Define the authorizer
+    authorizers:
+      myAuthorizer:
+        type: REQUEST
+        functionName: authorize-handler
+        identitySource: $request.header.Authorization
+    defaultAuthorizer: myAuthorizer
 
 package:
   individually: true
@@ -26,7 +28,7 @@ functions:
   seed:
     handler: user/seed.lambda_handler
 
-  authorizer:
+  authorize-handler:
     handler: hasPermission.lambda_handler
 
   token-create:
