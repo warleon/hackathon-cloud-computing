@@ -37,9 +37,6 @@ functions:
           path: auth/token/create
           method: post
           cors: true
-          authorizer:
-            name: customAuthorizer
-            identitySource: method.request.header.Authorization
 
   token-delete:
     handler: token/delete.lambda_handler

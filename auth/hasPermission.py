@@ -33,7 +33,7 @@ ROLES = {
             "delete": _creator_matches,
         },
     },
-    "user": {"tokens": {"create": True, "delete": True}},
+    "user": {"tokens": {"delete": True}},
 }
 
 
