@@ -71,7 +71,14 @@ def lambda_handler(event, context):
                 k: v for k, v in user.items() if k != "passwordHash" and k != "salt"
             },
         }
-        return {"statusCode": 200, "body": json.dumps(result)}
+        return {
+            "statusCode": 200,
+            "body": json.dumps(result),
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": True,
+            },
+        }
     except Exception as e:
         return {
             "statusCode": 500,

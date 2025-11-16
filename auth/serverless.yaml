@@ -191,24 +191,6 @@ resources:
           AttributeName: expiresAt
           Enabled: true
 
-    GatewayResponseDefault2XX:
-      Type: "AWS::ApiGateway::GatewayResponse"
-      Properties:
-        ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-        ResponseType: DEFAULT_2XX
-        RestApiId:
-          Ref: "ApiGatewayRestApi"
-    GatewayResponseDefault3XX:
-      Type: "AWS::ApiGateway::GatewayResponse"
-      Properties:
-        ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-        ResponseType: DEFAULT_3XX
-        RestApiId:
-          Ref: "ApiGatewayRestApi"
     GatewayResponseDefault4XX:
       Type: "AWS::ApiGateway::GatewayResponse"
       Properties:
