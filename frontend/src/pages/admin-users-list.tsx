@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,7 +82,8 @@ const AdminUsersListPage = () => {
               Gestión de usuarios
             </p>
             <p className="text-sm text-slate-500">
-              Filtra por rol o estado para ubicar rápidamente a tus colaboradores.
+              Filtra por rol o estado para ubicar rápidamente a tus
+              colaboradores.
             </p>
           </div>
           <div className="ml-auto flex gap-3">

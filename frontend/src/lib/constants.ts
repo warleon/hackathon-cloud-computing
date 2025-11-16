@@ -5,13 +5,20 @@ export const URL_BASE =
 const ENV = "dev";
 
 export const ENDPOINTS = {
-  LOGIN: { url: `${URL_BASE}/${ENV}/auth/token/create/`, method: "POST" },
-  LOGOUT: { url: `${URL_BASE}/${ENV}/auth/token/delete/`, method: "POST" },
+  LOGIN: `${URL_BASE}/${ENV}/auth/token/create/`,
+  LOGOUT: `${URL_BASE}/${ENV}/auth/token/delete/`,
   USER: {
-    CREATE: { url: `${URL_BASE}/${ENV}/auth/user/create`, method: "POST" },
-    UPDATE: { url: `${URL_BASE}/${ENV}/auth/user/update`, method: "POST" },
-    DELETE: { url: `${URL_BASE}/${ENV}/auth/user/delte`, method: "POST" },
-    GET: { url: `${URL_BASE}/${ENV}/auth/user/get`, method: "POST" },
-    LIST: { url: `${URL_BASE}/${ENV}/auth/user/list`, method: "POST" },
+    CREATE: `${URL_BASE}/${ENV}/auth/user/create/`,
+    UPDATE: `${URL_BASE}/${ENV}/auth/user/update/`,
+    DELETE: `${URL_BASE}/${ENV}/auth/user/delte/`,
+    GET: `${URL_BASE}/${ENV}/auth/user/get/`,
+    LIST: `${URL_BASE}/${ENV}/auth/user/list/`,
+  },
+  INCIDENT: {
+    CREATE: `${URL_BASE}/${ENV}/incident/create/`,
+    UPDATE: `${URL_BASE}/${ENV}/incident/update/`,
+    DELETE: `${URL_BASE}/${ENV}/incident/delte/`,
+    GET: `${URL_BASE}/${ENV}/incident/get/`,
+    LIST: `${URL_BASE}/${ENV}/incident/list/`,
   },
 };

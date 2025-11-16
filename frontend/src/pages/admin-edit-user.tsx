@@ -1,5 +1,5 @@
-import { FormEvent, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { type FormEvent, useMemo, useState } from "react";
+import { Link, useParams } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,15 +39,15 @@ const AdminEditUserPage = () => {
     notes: "",
   };
 
-  const [fullName, setFullName] = useState(fallbackUser.name);
-  const [email, setEmail] = useState(fallbackUser.email);
-  const [role, setRole] = useState(fallbackUser.role);
-  const [status, setStatus] = useState(fallbackUser.status);
-  const [notes, setNotes] = useState(fallbackUser.notes);
+  const [fullName, setFullName] = useState<string>(fallbackUser.name);
+  const [email, setEmail] = useState<string>(fallbackUser.email);
+  const [role, setRole] = useState<string>(fallbackUser.role);
+  const [status, setStatus] = useState<string>(fallbackUser.status);
+  const [notes, setNotes] = useState<string>(fallbackUser.notes);
 
   const pageTitle = useMemo(
     () => `Editar usuario · ${fullName || "Nuevo"}`,
-    [fullName],
+    [fullName]
   );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {

@@ -1,5 +1,5 @@
-import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { type FormEvent, useState } from "react";
+import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,10 @@ const AdminCreateUserPage = () => {
               Los administradores pueden asignar roles y dejar notas internas.
             </p>
           </div>
-          <Button asChild className="rounded-full bg-slate-900 px-6 py-5 hover:bg-slate-800">
+          <Button
+            asChild
+            className="rounded-full bg-slate-900 px-6 py-5 hover:bg-slate-800"
+          >
             <Link to="/admin/users">Ver usuarios</Link>
           </Button>
         </header>
