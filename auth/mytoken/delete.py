@@ -5,7 +5,10 @@ from _utils import tokens_table, split_token
 
 
 def lambda_handler(event, context):
-    token = event.get("token")
+    body = event.get("body")
+    if isinstance(body, str):
+        body = json.loads(body)
+    token = body.get("token")
     if not token:
         return {"statusCode": 400, "body": json.dumps({"message": "token required"})}
     tenant, _ = split_token(token)

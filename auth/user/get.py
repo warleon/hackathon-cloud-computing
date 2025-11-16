@@ -4,8 +4,11 @@ from _utils import users_table, get_user
 
 
 def lambda_handler(event, context):
-    tenant = event["tenant"]
-    user_id = event["id"]
+    body = event.get("body")
+    if isinstance(body, str):
+        body = json.loads(body)
+    tenant = body["tenant"]
+    user_id = body["id"]
     if not tenant:
         return {"statusCode": 400, "body": json.dumps({"message": "tenant required"})}
     if not user_id:

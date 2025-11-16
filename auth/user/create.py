@@ -5,10 +5,13 @@ from _utils import users_table, hash_password, now_iso
 
 
 def lambda_handler(event, context):
-    tenant = event["tenant"]
-    email = event["email"]
-    password = event["password"]
-    roles = event["roles"] if event["roles"] else []
+    body = event.get("body")
+    if isinstance(body, str):
+        body = json.loads(body)
+    tenant = body["tenant"]
+    email = body["email"]
+    password = body["password"]
+    roles = body["roles"] if body["roles"] else []
 
     if not tenant or not email or not password:
         return {
