@@ -7,7 +7,7 @@ def lambda_handler(event, context):
     body = event.get("body")
     if isinstance(body, str):
         body = json.loads(body)
-    user_id = (event.get("pathParameters") or {}).get("id") or body.get("id")
+    user_id = body.get("id")
     if not user_id:
         return {"statusCode": 400, "body": json.dumps({"message": "id required"})}
 

@@ -4,7 +4,10 @@ from _utils import users_table
 
 
 def lambda_handler(event, context):
-    user_id = event["id"]
+    body = event.get("body")
+    if isinstance(body, str):
+        body = json.loads(body)
+    user_id = body["id"]
     if not user_id:
         return {"statusCode": 400, "body": json.dumps({"message": "id required"})}
     try:
