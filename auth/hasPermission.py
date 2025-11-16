@@ -34,7 +34,7 @@ ROLES = {
     "user": {"tokens": {"delete": True}},
 }
 
-ARN_ACTION = {"POST/auth/token/delete": ("tokens", "delete")}
+ARN_ACTION = {"/POST/auth/token/delete": ("tokens", "delete")}
 
 
 def has_permission(
