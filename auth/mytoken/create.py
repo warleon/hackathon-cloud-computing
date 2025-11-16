@@ -7,6 +7,7 @@ from _utils import (
     tokens_table,
     verify_password,
     epoch_seconds_in,
+    CORS_HEADERS,
 )
 
 DEFAULT_TTL_SECONDS = int(
@@ -27,6 +28,7 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "body": json.dumps({"message": "tenant, email and password required"}),
+            "headers": CORS_HEADERS,
         }
 
     # Retrieve user by id (we store id==email)
@@ -38,12 +40,14 @@ def lambda_handler(event, context):
             return {
                 "statusCode": 401,
                 "body": json.dumps({"message": "invalid credentials"}),
+                "headers": CORS_HEADERS,
             }
 
         if not verify_password(password, user["passwordHash"], user["salt"]):
             return {
                 "statusCode": 401,
                 "body": json.dumps({"message": "invalid credentials"}),
+                "headers": CORS_HEADERS,
             }
 
         token_value = uuid.uuid4()  # opaque token given to client
@@ -74,13 +78,11 @@ def lambda_handler(event, context):
         return {
             "statusCode": 200,
             "body": json.dumps(result),
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Credentials": True,
-            },
+            "headers": CORS_HEADERS,
         }
     except Exception as e:
         return {
             "statusCode": 500,
             "body": json.dumps({"message": "internal error", "error": str(e)}),
+            "headers": CORS_HEADERS,
         }

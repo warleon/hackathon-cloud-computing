@@ -1,6 +1,6 @@
 # user/update.py
 import json
-from _utils import users_table, hash_password, now_iso
+from _utils import users_table, hash_password, now_iso, CORS_HEADERS
 
 
 def lambda_handler(event, context):
@@ -9,7 +9,11 @@ def lambda_handler(event, context):
         body = json.loads(body)
     user_id = body.get("id")
     if not user_id:
-        return {"statusCode": 400, "body": json.dumps({"message": "id required"})}
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"message": "id required"}),
+            "headers": CORS_HEADERS,
+        }
 
     update_expr = []
     expr_attr_vals = {}
@@ -33,6 +37,7 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "body": json.dumps({"message": "no updatable fields provided"}),
+            "headers": CORS_HEADERS,
         }
 
     update_expression = "SET " + ", ".join(update_expr)
@@ -47,9 +52,10 @@ def lambda_handler(event, context):
         resp = users_table.get_item(Key={"id": user_id})
         item = resp.get("Item")
         safe_user = {k: v for k, v in item.items() if k not in ("passwordHash", "salt")}
-        return {"statusCode": 200, "body": json.dumps(safe_user)}
+        return {"statusCode": 200, "body": json.dumps(safe_user), "headers": CORS_HEADERS}
     except Exception as e:
         return {
             "statusCode": 500,
             "body": json.dumps({"message": "internal error", "error": str(e)}),
+            "headers": CORS_HEADERS,
         }

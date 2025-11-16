@@ -1,6 +1,6 @@
 # user/list.py
 import json
-from _utils import users_table
+from _utils import users_table, CORS_HEADERS
 from boto3.dynamodb.conditions import Attr
 
 
@@ -13,13 +13,15 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "body": json.dumps({"message": "tenant query param required"}),
+            "headers": CORS_HEADERS,
         }
     try:
         resp = users_table.scan(FilterExpression=Attr("tenant").eq(tenant))
         items = resp.get("Items", [])
-        return {"statusCode": 200, "body": json.dumps(items)}
+        return {"statusCode": 200, "body": json.dumps(items), "headers": CORS_HEADERS}
     except Exception as e:
         return {
             "statusCode": 500,
             "body": json.dumps({"message": "internal error", "error": str(e)}),
+            "headers": CORS_HEADERS,
         }
