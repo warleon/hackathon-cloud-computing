@@ -16,7 +16,7 @@ provider:
 #      customAuthorizer:
 #        type: REQUEST
 #        functionName: authorize-handler
-#        identitySource: $request.header.Authorization
+#        identitySource: method.request.header.Authorization
 
 package:
   individually: true
@@ -39,7 +39,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: $request.header.Authorization
+            identitySource: method.request.header.Authorization
 
   token-delete:
     handler: token/delete.lambda_handler
@@ -50,7 +50,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: $request.header.Authorization
+            identitySource: method.request.header.Authorization
 
   user-create:
     handler: user/create.lambda_handler
@@ -61,7 +61,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: $request.header.Authorization
+            identitySource: method.request.header.Authorization
 
   user-get:
     handler: user/get.lambda_handler
@@ -72,7 +72,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: $request.header.Authorization
+            identitySource: method.request.header.Authorization
 
   user-list:
     handler: user/list.lambda_handler
@@ -83,7 +83,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: $request.header.Authorization
+            identitySource: method.request.header.Authorization
 
   user-update:
     handler: user/update.lambda_handler
@@ -94,7 +94,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: $request.header.Authorization
+            identitySource: method.request.header.Authorization
 
   user-delete:
     handler: user/delete.lambda_handler
@@ -105,7 +105,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: $request.header.Authorization
+            identitySource: method.request.header.Authorization
 
 resources:
   Resources:
