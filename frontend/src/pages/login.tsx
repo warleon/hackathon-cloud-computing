@@ -11,7 +11,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-sky-400 ">
-      <div className="h-svh w-full max-w-md min-w-max bg-white p-8  flex flex-col justify-start items-center">
+      <div className="h-screen w-full max-w-md min-w-max bg-white p-8  flex flex-col justify-start items-center">
         <div className="space-y-1 text-center">
           <p className="text-4xl font-bold tracking-wide py-8">ALERTA UTEC</p>
           <p className="text-lg font-medium tracking-[0.4em] text-slate-800 py-8">
