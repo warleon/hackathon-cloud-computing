@@ -95,6 +95,7 @@ def lambda_handler(event, context):
     data = get_token_data(token)
     allowed = has_permission(data.get("user"), resource, action)
 
+    print("AUTHORIZED", allowed)
     if allowed:
         return generate_policy(token, "Allow", arn)
 
