@@ -6,7 +6,6 @@ from _utils import (
     users_table,
     tokens_table,
     verify_password,
-    now_iso,
     epoch_seconds_in,
 )
 
