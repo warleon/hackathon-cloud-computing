@@ -24,8 +24,9 @@ export type User = {
 
 export type Token = {
   tenant: string;
-  id: string;
-  user: string;
+  id: string; // user.id#token
+  token: string;
+  user: User;
   expiresAt: string;
 };
 
