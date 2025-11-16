@@ -4,137 +4,145 @@ provider:
   name: aws
   runtime: python3.11
   region: us-east-1
+  stage: ${opt:stage, 'dev'}
+
+  # Tu rol fijo del laboratorio  
+  iam:
+    role: arn:aws:iam::536437847708:role/LabRole
+
   environment:
     WEBSOCKETS_TABLE: ${self:custom.tables.websockets}
-    USERS_TABLE: ${cf:auth-api-dev.auth-UsersTable}
-    INCIDENTS_TABLE: ${cf:auth-api-dev.auth-IncidentsTable}
-    TOKENS_TABLE: ${cf:auth-api-dev.auth-TokensTable}
+    USERS_TABLE: ${cf:auth-api-${sls:stage}.auth-UsersTable}
+    INCIDENTS_TABLE: ${cf:auth-api-${sls:stage}.auth-IncidentsTable}
+    TOKENS_TABLE: ${cf:auth-api-${sls:stage}.auth-TokensTable}
     API_GATEWAY_ENDPOINT:
       Fn::Join:
         - ""
         - - https://
-          - Ref: WebsocketsApi
-          - .execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
-
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:PutItem
-        - dynamodb:DeleteItem
-        - dynamodb:GetItem
-        - dynamodb:Scan
-        - dynamodb:Query
-      Resource:
-        - ${self:custom.tableArns.websockets}
-
-    - Effect: Allow
-      Action:
-        - execute-api:ManageConnections
-      Resource: "*"
-
-    - Effect: Allow
-      Action:
-        - dynamodb:DescribeStream
-        - dynamodb:GetRecords
-        - dynamodb:GetShardIterator
-        - dynamodb:ListStreams
-      Resource:
-        - ${self:custom.streamArns.users}
-        - ${self:custom.streamArns.incidents}
-        - ${self:custom.streamArns.tokens}
+          - Ref: WebsocketApi
+          - .execute-api.${self:provider.region}.amazonaws.com/${sls:stage}
 
 custom:
-  stage: ${opt:stage, 'dev'}
-
   tables:
-    websockets: WebsocketConnections-${self:custom.stage}
-
-  tableArns:
-    websockets:
-      Fn::GetAtt:
-        - WebsocketConnectionsTable
-        - Arn
-
-  # Streams imported from the Auth API
-  streamArns:
-    users: ${cf:auth-api-dev.UsersTableStreamArn}
-    incidents: ${cf:auth-api-dev.IncidentsTableStreamArn}
-    tokens: ${cf:auth-api-dev.TokensTableStreamArn}
+    websockets: ${self:service}-connections-${sls:stage}
 
 functions:
   onConnect:
-    handler: streaming/onConnect.handler
+    handler: onConnect.handler
     events:
       - websocket:
           route: $connect
 
   onDisconnect:
-    handler: streaming/onDisconnect.handler
+    handler: onDisconnect.handler
     events:
       - websocket:
           route: $disconnect
 
   notify:
-    handler: streaming/notify.handler
-    # Three stream triggers: users, incidents, tokens
+    handler: notify.handler
     events:
       - stream:
           type: dynamodb
-          arn: ${self:custom.streamArns.users}
-      - stream:
-          type: dynamodb
-          arn: ${self:custom.streamArns.incidents}
-      - stream:
-          type: dynamodb
-          arn: ${self:custom.streamArns.tokens}
+          arn: ${cf:auth-api-${sls:stage}.auth-IncidentsTableStreamArn}
+          batchSize: 10
+          startingPosition: LATEST
 
 resources:
   Resources:
-    WebsocketsApi:
+
+    # === Crear API Websocket ===
+    WebsocketApi:
       Type: AWS::ApiGatewayV2::Api
       Properties:
         Name: websocket-api
         ProtocolType: WEBSOCKET
         RouteSelectionExpression: "$request.body.action"
 
-    WebsocketConnectionsTable:
-      Type: AWS::DynamoDB::Table
+    # === Crear Stage ===
+    WebsocketApiStage:
+      Type: AWS::ApiGatewayV2::Stage
       Properties:
-        TableName: ${self:custom.tables.websockets}
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: connectionId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: connectionId
-            KeyType: HASH
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
+        StageName: ${sls:stage}
+        ApiId:
+          Ref: WebsocketApi
+        AutoDeploy: true
 
-    # Permissions for API Gateway routes → Lambda
+    # === Integraciones ===
+    ConnectIntegration:
+      Type: AWS::ApiGatewayV2::Integration
+      Properties:
+        ApiId: { Ref: WebsocketApi }
+        IntegrationType: AWS_PROXY
+        IntegrationUri:
+          Fn::GetAtt: [OnConnectLambdaFunction, Arn]
+
+    DisconnectIntegration:
+      Type: AWS::ApiGatewayV2::Integration
+      Properties:
+        ApiId: { Ref: WebsocketApi }
+        IntegrationType: AWS_PROXY
+        IntegrationUri:
+          Fn::GetAtt: [OnDisconnectLambdaFunction, Arn]
+
+    # === Rutas ===
+    ConnectRoute:
+      Type: AWS::ApiGatewayV2::Route
+      Properties:
+        ApiId: { Ref: WebsocketApi }
+        RouteKey: $connect
+        AuthorizationType: NONE
+        Target:
+          Fn::Join:
+            - /
+            - - integrations
+              - Ref: ConnectIntegration
+
+    DisconnectRoute:
+      Type: AWS::ApiGatewayV2::Route
+      Properties:
+        ApiId: { Ref: WebsocketApi }
+        RouteKey: $disconnect
+        AuthorizationType: NONE
+        Target:
+          Fn::Join:
+            - /
+            - - integrations
+              - Ref: DisconnectIntegration
+
+    # === Permisos Lambda → API Gateway ===
     OnConnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: ${self:service}-dev-onConnect
+        FunctionName: ${self:service}-${sls:stage}-onConnect
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
 
     OnDisconnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: ${self:service}-dev-onDisconnect
+        FunctionName: ${self:service}-${sls:stage}-onDisconnect
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
 
-    NotifyPermission:
-      Type: AWS::Lambda::Permission
+    # === Tabla DynamoDB ===
+    WebsocketsTable:
+      Type: AWS::DynamoDB::Table
       Properties:
-        FunctionName: ${self:service}-dev-notify
-        Action: lambda:InvokeFunction
-        Principal: apigateway.amazonaws.com
+        TableName: ${self:custom.tables.websockets}
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
 
   Outputs:
-    WebsocketConnectionsTable:
-      Value: ${self:custom.tables.websockets}
-      Export:
-        Name: websocket-ConnectionsTable
+    WebsocketUrl:
+      Value:
+        Fn::Join:
+          - ""
+          - - wss://
+            - Ref: WebsocketApi
+            - .execute-api.${self:provider.region}.amazonaws.com/${sls:stage}
