@@ -27,7 +27,7 @@ functions:
     handler: hasPermission.lambda_handler
 
   tokenCreate:
-    handler: token/create.lambda_handler
+    handler: mytoken/create.lambda_handler
     events:
       - http:
           path: auth/token/create
@@ -35,7 +35,7 @@ functions:
           cors: true
 
   token-delete:
-    handler: token/delete.lambda_handler
+    handler: mytoken/delete.lambda_handler
     events:
       - http:
           path: auth/token/delete
