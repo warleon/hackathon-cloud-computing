@@ -2,7 +2,7 @@ service: auth-api
 
 provider:
   name: aws
-  runtime: python3.14
+  runtime: python3.13
   region: us-east-1
   timeout: 29
   iam:
