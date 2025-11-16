@@ -51,16 +51,17 @@ def split_token(token):
     return token.split("#")
 
 
-def get_token(tenant, id):
-    resp = tokens_table.get_item(Key={"tenant": tenant, "id": id})
+def get_token(tenant, token):
+    resp = tokens_table.get_item(Key={"tenant": tenant, "id": token})
     print(resp)
     item = resp.get("Item")
+    print(item)
     if not item:
         return None
     return item
 
 
 def get_token_data(token):
-    tenant, id = split_token(token)
-    print(tenant, id)
+    tenant, _ = split_token(token)
+    print(tenant, token)
     return get_token(tenant, id)
