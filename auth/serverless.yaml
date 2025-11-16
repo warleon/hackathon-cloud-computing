@@ -17,8 +17,6 @@ provider:
         type: REQUEST
         functionName: authorize-handler
         identitySource: $request.header.Authorization
-  authorizer:
-    name: customAuthorizer
 
 package:
   individually: true
@@ -39,6 +37,8 @@ functions:
           path: auth/token/create
           method: post
           cors: true
+          authorizer:
+            name: customAuthorizer
 
   token-delete:
     handler: token/delete.lambda_handler
@@ -47,6 +47,8 @@ functions:
           path: auth/token/delete
           method: post
           cors: true
+          authorizer:
+            name: customAuthorizer
 
   user-create:
     handler: user/create.lambda_handler
@@ -55,6 +57,8 @@ functions:
           path: auth/user
           method: post
           cors: true
+          authorizer:
+            name: customAuthorizer
 
   user-get:
     handler: user/get.lambda_handler
@@ -63,6 +67,8 @@ functions:
           path: auth/user
           method: post
           cors: true
+          authorizer:
+            name: customAuthorizer
 
   user-list:
     handler: user/list.lambda_handler
@@ -71,6 +77,8 @@ functions:
           path: auth/user
           method: get
           cors: true
+          authorizer:
+            name: customAuthorizer
 
   user-update:
     handler: user/update.lambda_handler
@@ -79,6 +87,8 @@ functions:
           path: auth/user/{id}
           method: put
           cors: true
+          authorizer:
+            name: customAuthorizer
 
   user-delete:
     handler: user/delete.lambda_handler
@@ -87,6 +97,8 @@ functions:
           path: auth/user/{id}
           method: delete
           cors: true
+          authorizer:
+            name: customAuthorizer
 
 resources:
   Resources:
