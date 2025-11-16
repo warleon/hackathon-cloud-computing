@@ -1,16 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+
 import { ENDPOINTS } from "@/lib/constants";
 import { type User } from "@/lib/auth_types";
 
 const TOKEN_KEY = "auth_token";
+const USER_KEY = "auth_user";
 
 export function useAuth() {
   const [token, setToken] = useState<string | null>(() => {
     return localStorage.getItem(TOKEN_KEY);
   });
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User | null>(() => {
+    const stored = localStorage.getItem(USER_KEY);
+    if (!stored) return null;
+    try {
+      return JSON.parse(stored) as User;
+    } catch (err) {
+      console.error("Error parsing stored user:", err);
+      return null;
+    }
+  });
 
   // ---------------------------
   // LOGIN
@@ -26,6 +37,7 @@ export function useAuth() {
       const authenticatedUser = res.data.user;
 
       localStorage.setItem(TOKEN_KEY, newToken);
+      localStorage.setItem(USER_KEY, JSON.stringify(authenticatedUser));
       setToken(newToken);
       setUser(authenticatedUser);
 
@@ -56,7 +68,9 @@ export function useAuth() {
     }
 
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
     setToken(null);
+    setUser(null);
 
     // Redirect to login page
     window.location.href = "/";

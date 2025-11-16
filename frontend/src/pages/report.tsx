@@ -112,8 +112,7 @@ const ReportPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-sky-400 ">
-      <div className="container mx-auto flex flex-col gap-8  bg-white p-8 shadow-2xl">
+    <div className="mx-auto flex max-w-5xl flex-col gap-8 rounded-[2.5rem] bg-white p-8 shadow-2xl">
         <header className="space-y-1 text-left">
           <p className="text-3xl font-semibold text-slate-900">ALERTA UTEC</p>
           <p className="text-base text-slate-600">
@@ -273,7 +272,6 @@ const ReportPage = () => {
             </Button>
           </div>
         </form>
-      </div>
     </div>
   );
 };

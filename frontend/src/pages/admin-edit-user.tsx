@@ -55,8 +55,7 @@ const AdminEditUserPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-sky-400 px-4 py-10">
-      <div className="mx-auto max-w-4xl rounded-[2.5rem] bg-white p-8 shadow-2xl">
+    <div className="mx-auto max-w-4xl rounded-[2.5rem] bg-white p-8 shadow-2xl">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-3xl font-semibold text-slate-900">ALERTA UTEC</p>
@@ -158,7 +157,6 @@ const AdminEditUserPage = () => {
             </Button>
           </div>
         </form>
-      </div>
     </div>
   );
 };

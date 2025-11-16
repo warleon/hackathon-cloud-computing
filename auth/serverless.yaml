@@ -30,7 +30,15 @@ functions:
       - http:
           path: auth/token/create
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
 
   token-delete:
     handler: mytoken/delete.lambda_handler
@@ -38,7 +46,15 @@ functions:
       - http:
           path: auth/token/delete
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
           authorizer:
             name: customAuthorizer
             identitySource: method.request.header.Authorization
@@ -49,7 +65,15 @@ functions:
       - http:
           path: auth/user/create
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
           authorizer:
             name: customAuthorizer
             identitySource: method.request.header.Authorization
@@ -60,7 +84,15 @@ functions:
       - http:
           path: auth/user/get
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
           authorizer:
             name: customAuthorizer
             identitySource: method.request.header.Authorization
@@ -71,7 +103,15 @@ functions:
       - http:
           path: auth/user/list
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
           authorizer:
             name: customAuthorizer
             identitySource: method.request.header.Authorization
@@ -82,7 +122,15 @@ functions:
       - http:
           path: auth/user/update
           method: put
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
           authorizer:
             name: customAuthorizer
             identitySource: method.request.header.Authorization
@@ -93,7 +141,15 @@ functions:
       - http:
           path: auth/user/delete
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: false
           authorizer:
             name: customAuthorizer
             identitySource: method.request.header.Authorization

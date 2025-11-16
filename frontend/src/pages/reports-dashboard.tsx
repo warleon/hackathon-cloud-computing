@@ -3,6 +3,7 @@ import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuthContext } from "@/hooks/auth/AuthProvider";
 
 type ReportStatus = "Pendiente" | "En atención" | "Atendido";
 
@@ -59,12 +60,14 @@ const statusLabels: Record<ReportStatus, string> = {
 };
 
 const ReportsDashboardPage = () => {
+  const { user } = useAuthContext();
   const [search, setSearch] = useState("");
   const [activeStatuses, setActiveStatuses] = useState<ReportStatus[]>([
     "Pendiente",
     "En atención",
     "Atendido",
   ]);
+  const displayName = user?.email ?? "Usuario";
 
   const toggleStatus = (status: ReportStatus) => {
     setActiveStatuses((prev) =>
@@ -88,12 +91,11 @@ const ReportsDashboardPage = () => {
   }, [search, activeStatuses]);
 
   return (
-    <div className="min-h-screen bg-sky-400 px-4 ">
-      <div className="container mx-auto flex h-screen  flex-col gap-6  bg-white p-8 shadow-2xl">
+    <div className="mx-auto flex max-w-5xl flex-col gap-6 rounded-[2.5rem] bg-white p-8 shadow-2xl">
         <header className="space-y-1">
           <p className="text-3xl font-semibold text-slate-900">ALERTA UTEC</p>
           <p className="text-xl text-slate-800">
-            Bienvenido, <span className="font-semibold">{`{nombre}`}</span>
+            Bienvenido, <span className="font-semibold">{displayName}</span>
           </p>
           <p className="text-sm text-slate-500">
             Reportar incidentes dentro del campus UTEC
@@ -170,7 +172,6 @@ const ReportsDashboardPage = () => {
             </div>
           </div>
         </section>
-      </div>
     </div>
   );
 };
