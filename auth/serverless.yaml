@@ -10,7 +10,6 @@ provider:
   environment:
     USERS_TABLE: ${self:service}-users-${sls:stage}
     TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
-  httpApi:
 
 package:
   individually: true
