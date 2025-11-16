@@ -13,11 +13,12 @@ provider:
   httpApi:
     # Define the authorizer
     authorizers:
-      myAuthorizer:
+      customAuthorizer:
         type: REQUEST
         functionName: authorize-handler
         identitySource: $request.header.Authorization
-    defaultAuthorizer: myAuthorizer
+  authorizer:
+    name: customAuthorizer
 
 package:
   individually: true
