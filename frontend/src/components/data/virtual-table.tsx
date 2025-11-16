@@ -4,7 +4,7 @@
   type Row,
 } from "@tanstack/react-table";
 import type { UIEvent } from "react";
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -81,19 +81,15 @@ export function VirtualTable<TData>({
   };
 
   const totalHeight = rows.length * rowHeight;
-  const startIndex = Math.max(
-    0,
-    Math.floor(scrollTop / rowHeight) - OVERSCAN,
-  );
-  const visibleCount =
-    Math.ceil(containerHeight / rowHeight) + OVERSCAN * 2;
+  const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - OVERSCAN);
+  const visibleCount = Math.ceil(containerHeight / rowHeight) + OVERSCAN * 2;
   const endIndex = Math.min(rows.length, startIndex + visibleCount);
   const visibleRows = rows.slice(startIndex, endIndex);
   const offsetY = startIndex * rowHeight;
 
   const columnTemplate = useMemo(() => {
     const widths = columns.map(
-      (column) => column.columnDef.meta?.width ?? "1fr",
+      (column) => column.columnDef.meta?.width ?? "1fr"
     );
     return widths.join(" ");
   }, [columns]);
@@ -102,7 +98,7 @@ export function VirtualTable<TData>({
     <div
       className={cn(
         "overflow-hidden rounded-3xl border border-slate-200 bg-white",
-        className,
+        className
       )}
     >
       <div className="bg-slate-100">
@@ -116,7 +112,10 @@ export function VirtualTable<TData>({
               <div key={header.id}>
                 {header.isPlaceholder
                   ? null
-                  : flexRender(header.column.columnDef.header, header.getContext())}
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
               </div>
             ))}
           </div>
@@ -151,14 +150,23 @@ export function VirtualTable<TData>({
                     "grid gap-2 px-6 py-4 text-sm text-slate-800 transition",
                     onRowClick
                       ? "cursor-pointer hover:bg-slate-50"
-                      : "hover:bg-slate-50",
+                      : "hover:bg-slate-50"
                   )}
-                  style={{ gridTemplateColumns: columnTemplate, height: rowHeight }}
+                  style={{
+                    gridTemplateColumns: columnTemplate,
+                    height: rowHeight,
+                  }}
                   onClick={() => onRowClick?.(row)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <div key={cell.id} className={cell.column.columnDef.meta?.className}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <div
+                      key={cell.id}
+                      className={cell.column.columnDef.meta?.className}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </div>
                   ))}
                 </div>

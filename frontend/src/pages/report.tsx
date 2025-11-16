@@ -307,10 +307,10 @@ const ReportPage = () => {
         <div className="flex justify-end">
           <Button
             className="rounded-full bg-slate-900 px-10 py-6 text-lg font-semibold text-white hover:bg-slate-800"
-            disabled={createIncident.isLoading}
+            disabled={createIncident.isPending}
             type="submit"
           >
-            {createIncident.isLoading ? "Enviando..." : "Enviar reporte"}
+            {createIncident.isPending ? "Enviando..." : "Enviar reporte"}
           </Button>
         </div>
       </form>
@@ -319,5 +319,3 @@ const ReportPage = () => {
 };
 
 export default ReportPage;
-
-

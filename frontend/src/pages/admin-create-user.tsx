@@ -73,7 +73,7 @@ const AdminCreateUserPage = () => {
     !fullName.trim() ||
     !email.trim() ||
     !password.trim() ||
-    createUser.isLoading;
+    createUser.isPending;
 
   return (
     <div className="mx-auto max-w-4xl rounded-[2.5rem] bg-white p-8 shadow-2xl">
@@ -219,7 +219,7 @@ const AdminCreateUserPage = () => {
             disabled={isDisabled}
             type="submit"
           >
-            {createUser.isLoading ? "Guardando..." : "Guardar usuario"}
+            {createUser.isPending ? "Guardando..." : "Guardar usuario"}
           </Button>
         </div>
       </form>

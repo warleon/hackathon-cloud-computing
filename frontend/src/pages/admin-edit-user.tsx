@@ -99,7 +99,7 @@ const AdminEditUserPage = () => {
 
   const isLoading = userQuery.isLoading;
   const isDisabled =
-    !formState.fullName.trim() || updateUser.isLoading || isLoading;
+    !formState.fullName.trim() || updateUser.isPending || isLoading;
 
   return (
     <div className="mx-auto max-w-4xl rounded-[2.5rem] bg-white p-8 shadow-2xl">
@@ -273,7 +273,7 @@ const AdminEditUserPage = () => {
             disabled={isDisabled}
             type="submit"
           >
-            {updateUser.isLoading ? "Guardando..." : "Guardar cambios"}
+            {updateUser.isPending ? "Guardando..." : "Guardar cambios"}
           </Button>
         </div>
       </form>
