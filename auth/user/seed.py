@@ -23,12 +23,8 @@ def generate_password(length=16):
 
 
 def lambda_handler(event, context):
-    body = event.get("body")
-    if isinstance(body, str):
-        body = json.loads(body)
-
-    tenant = body.get("tenant")
-    email_suffix = body.get("emailSuffix")
+    tenant = event["tenant"]
+    email_suffix = event["emailSuffix"]
 
     if not tenant or not email_suffix:
         return {
