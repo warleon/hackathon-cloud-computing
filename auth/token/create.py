@@ -5,12 +5,10 @@ import uuid
 from _utils import (
     users_table,
     tokens_table,
-    hash_password,
     verify_password,
     now_iso,
     epoch_seconds_in,
 )
-from boto3.dynamodb.conditions import Key
 
 DEFAULT_TTL_SECONDS = int(
     os.environ.get("TOKEN_TTL_SECONDS", 60 * 60 * 24 * 7)
@@ -18,13 +16,10 @@ DEFAULT_TTL_SECONDS = int(
 
 
 def lambda_handler(event, context):
-    body = event.get("body")
-    if isinstance(body, str):
-        body = json.loads(body)
-    tenant = body.get("tenant")
-    email = body.get("email")
-    password = body.get("password")
-    ttl = body.get("ttlSeconds", DEFAULT_TTL_SECONDS)
+    tenant = event["tenant"]
+    email = event["email"]
+    password = event["password"]
+    ttl = event["ttlSeconds"] or DEFAULT_TTL_SECONDS
 
     if not tenant or not email or not password:
         return {
@@ -35,14 +30,8 @@ def lambda_handler(event, context):
     # Retrieve user by id (we store id==email)
     # If you had tenant+email composite key you'd query; here we will get by PK email and check tenant.
     try:
-        resp = users_table.get_item(Key={"id": email})
-        user = resp.get("Item")
-        if not user or user.get("tenant") != tenant:
-            return {
-                "statusCode": 401,
-                "body": json.dumps({"message": "invalid credentials"}),
-            }
-
+        resp = users_table.get_item(Key={"tenant": tenant, "id": email})
+        user = resp["Item"]
         if "passwordHash" not in user or "salt" not in user:
             return {
                 "statusCode": 401,
@@ -55,10 +44,10 @@ def lambda_handler(event, context):
                 "body": json.dumps({"message": "invalid credentials"}),
             }
 
-        token_id = f"{user['id']}#{uuid.uuid4().hex}"
-        token_value = uuid.uuid4().hex  # opaque token given to client
+        token_value = uuid.uuid4()  # opaque token given to client
+        token_id = f"{user['id']}#{token_value}"
+        token_value = token_value.hex
         expires_epoch = epoch_seconds_in(ttl)
-        expires_iso = now_iso()
 
         token_item = {
             "id": token_id,
@@ -72,6 +61,7 @@ def lambda_handler(event, context):
         tokens_table.put_item(Item=token_item)
 
         result = {
+            "tenant": tenant,
             "token": token_value,
             "tokenId": token_id,
             "expiresAt": expires_epoch,
