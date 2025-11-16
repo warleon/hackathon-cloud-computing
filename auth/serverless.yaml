@@ -2,8 +2,11 @@ service: auth-api
 
 provider:
   name: aws
-  runtime: python3.11
+  runtime: python3.14
   region: us-east-1
+  timeout: 29
+  iam:
+    role: arn:aws:iam::407603477016:role/LabRole
   environment:
     USERS_TABLE: ${self:service}-users-${sls:stage}
     TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
