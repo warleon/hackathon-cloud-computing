@@ -24,7 +24,7 @@ functions:
   customAuthorizer:
     handler: hasPermission.lambda_handler
 
-  tokenCreate:
+  token-create:
     handler: mytoken/create.lambda_handler
     events:
       - http:
