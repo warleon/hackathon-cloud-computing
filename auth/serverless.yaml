@@ -13,12 +13,9 @@ provider:
   httpApi:
 
 package:
-  #individually: true
+  individually: true
   include:
-    - "_utils.py"
-    - "token/**"
-    - "user/**"
-
+    - "./**"
 functions:
   seed:
     handler: user/seed.lambda_handler
