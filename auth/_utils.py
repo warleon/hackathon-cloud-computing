@@ -64,4 +64,4 @@ def get_token(tenant, token):
 def get_token_data(token):
     tenant, _ = split_token(token)
     print(tenant, token)
-    return get_token(tenant, id)
+    return get_token(tenant, token)
