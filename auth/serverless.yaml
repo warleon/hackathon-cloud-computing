@@ -101,7 +101,7 @@ resources:
           - AttributeName: tenant
             KeyType: HASH
           - AttributeName: id
-            KeyType: range
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
 
     TokensTable:
@@ -117,7 +117,7 @@ resources:
           - AttributeName: tenant
             KeyType: HASH
           - AttributeName: id
-            KeyType: range
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TimeToLiveSpecification:
           AttributeName: expiresAt
