@@ -44,7 +44,7 @@ def lambda_handler(event, context):
             }
 
         token_value = uuid.uuid4()  # opaque token given to client
-        token_id = f"{user['id']}#{token_value.hex}"
+        token_id = f"{tenant}#{token_value.hex}"
         token_value = token_value.hex
         expires_epoch = epoch_seconds_in(ttl)
 

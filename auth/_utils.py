@@ -37,3 +37,28 @@ def now_iso() -> str:
 
 def epoch_seconds_in(duration_seconds: int) -> int:
     return int(time.time()) + int(duration_seconds)
+
+
+def get_user(tenant, id):
+    resp = users_table.get_item(Key={"tenant": tenant, "id": id})
+    item = resp.get("Item")
+    if not item:
+        return None
+    return item
+
+
+def split_token(token):
+    return token.split("#")
+
+
+def get_token(tenant, id):
+    resp = tokens_table.get_item(Key={"tenant": tenant, "id": id})
+    item = resp.get("Item")
+    if not item:
+        return None
+    return item
+
+
+def get_token_data(token):
+    tenant, id = split_token(token)
+    return get_token(tenant, id)
