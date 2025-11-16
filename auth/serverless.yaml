@@ -41,7 +41,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.querystring
+            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
 
   user-create:
     handler: user/create.lambda_handler
@@ -52,7 +52,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.querystring
+            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
 
   user-get:
     handler: user/get.lambda_handler
@@ -63,7 +63,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.querystring
+            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
 
   user-list:
     handler: user/list.lambda_handler
@@ -74,7 +74,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.querystring
+            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
 
   user-update:
     handler: user/update.lambda_handler
@@ -85,7 +85,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization , method.request.querystring
+            identitySource: method.request.header.Authorization , method.request.header.mycustomdata
 
   user-delete:
     handler: user/delete.lambda_handler
@@ -96,7 +96,7 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            identitySource: method.request.header.Authorization, method.request.querystring
+            identitySource: method.request.header.Authorization, method.request.header.mycustomdata
 
 resources:
   Resources:
