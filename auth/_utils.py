@@ -15,6 +15,7 @@ CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Credentials": True,
 }
+VALID_INCIDENT_STATES = {"PENDING", "ATTENDING", "FINISHED"}
 
 dynamodb = boto3.resource("dynamodb")
 users_table = dynamodb.Table(USERS_TABLE)
@@ -48,6 +49,14 @@ def epoch_seconds_in(duration_seconds: int) -> int:
 
 def get_user(tenant, id):
     resp = users_table.get_item(Key={"tenant": tenant, "id": id})
+    item = resp.get("Item")
+    if not item:
+        return None
+    return item
+
+
+def get_incident(tenant, id):
+    resp = incidents_table.get_item(Key={"tenant": tenant, "id": id})
     item = resp.get("Item")
     if not item:
         return None
