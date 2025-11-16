@@ -1,0 +1,121 @@
+service: auth-api
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  environment:
+    USERS_TABLE: ${self:service}-users-${sls:stage}
+    TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-users-${sls:stage}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-tokens-${sls:stage}
+
+functions:
+  token-create:
+    handler: token/create.lambda_handler
+    events:
+      - http:
+          path: auth/token/create
+          method: post
+          cors: true
+
+  token-delete:
+    handler: token/delete.lambda_handler
+    events:
+      - http:
+          path: auth/token/delete
+          method: post
+          cors: true
+
+  user-create:
+    handler: user/create.lambda_handler
+    events:
+      - http:
+          path: auth/user
+          method: post
+          cors: true
+
+  user-get:
+    handler: user/get.lambda_handler
+    events:
+      - http:
+          path: auth/user/{id}
+          method: get
+          cors: true
+
+  user-list:
+    handler: user/list.lambda_handler
+    events:
+      - http:
+          path: auth/user
+          method: get
+          cors: true
+
+  user-update:
+    handler: user/update.lambda_handler
+    events:
+      - http:
+          path: auth/user/{id}
+          method: put
+          cors: true
+
+  user-delete:
+    handler: user/delete.lambda_handler
+    events:
+      - http:
+          path: auth/user/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-users-${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: tenant
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        # If you expect queries by tenant, add a GSI for tenant -> uncomment below
+        # GlobalSecondaryIndexes:
+        #   - IndexName: tenant-index
+        #     KeySchema:
+        #       - AttributeName: tenant
+        #         KeyType: HASH
+        #     Projection:
+        #       ProjectionType: ALL
+
+    TokensTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-tokens-${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: expiresAt
+          Enabled: true
