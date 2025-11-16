@@ -100,6 +100,10 @@ def generate_policy(principal_id, effect, resource):
     """
     auth_response = {}
     auth_response["principalId"] = principal_id
+    auth_response["headers"] = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": True,
+    }
 
     if effect and resource:
         policy_document = {
