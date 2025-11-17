@@ -80,6 +80,22 @@ def has_permission(
     return False
 
 
+def allow(resource):
+    return {
+        "principalId": "voclabs/user4313077=anthony.aguilar@utec.edu.pe",
+        "policyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Action": "execute-api:Invoke",
+                    "Effect": "Allow",
+                    "Resource": resource,
+                }
+            ],
+        },
+    }
+
+
 def lambda_handler(event, context):
     print(event)
     token = event.get("authorizationToken")
@@ -97,20 +113,8 @@ def lambda_handler(event, context):
 
     print("AUTHORIZED", allowed)
     if allowed:
-        response = generate_policy("Allow", arn)
+        response = allow(arn)
         print(response)
         return response
 
     raise Exception("Unauthorized")
-
-
-def generate_policy(effect, resource):
-    return {
-        "principalId": "apigateway.amazonaws.com",
-        "policyDocument": {
-            "Version": "2012-10-17",
-            "Statement": [
-                {"Action": "execute-api:Invoke", "Effect": effect, "Resource": resource}
-            ],
-        },
-    }
