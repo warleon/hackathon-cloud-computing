@@ -203,3 +203,10 @@ resources:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+
+    AuthorizerPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !Ref CustomAuthorizerLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
