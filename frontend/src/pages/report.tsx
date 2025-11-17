@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuthContext } from "@/hooks/auth/AuthProvider";
+import { useAuthContext } from "@/hooks/auth/authContext";
 import { ENDPOINTS } from "@/lib/constants";
 
 const DEFAULT_INCIDENT_TYPES = [

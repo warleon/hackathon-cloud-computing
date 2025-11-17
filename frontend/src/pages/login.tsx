@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuthContext } from "@/hooks/auth/AuthProvider";
+import { useAuthContext } from "@/hooks/auth/authContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();

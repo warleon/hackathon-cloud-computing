@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { VirtualTable } from "@/components/data/virtual-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuthContext } from "@/hooks/auth/AuthProvider";
+import { useAuthContext } from "@/hooks/auth/authContext";
 import { ENDPOINTS } from "@/lib/constants";
 import { type Incident } from "@/lib/incident_types";
 import { cn } from "@/lib/utils";

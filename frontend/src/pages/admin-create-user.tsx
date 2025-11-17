@@ -12,8 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuthContext } from "@/hooks/auth/AuthProvider";
 import { ENDPOINTS } from "@/lib/constants";
+import { useAuthContext } from "@/hooks/auth/authContext";
 
 const ROLE_OPTIONS = [
   { label: "Administrador", value: "admin" },
