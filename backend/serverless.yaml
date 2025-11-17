@@ -205,28 +205,11 @@ resources:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
 
-    ApiGatewayAuthorizerRole:
-      Type: AWS::IAM::Role
+    AuthorizerPermission:
+      Type: AWS::Lambda::Permission
       Properties:
-        AssumeRolePolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            - Effect: "Allow"
-              Principal:
-                Service:
-                  - "apigateway.amazonaws.com"
-              Action:
-                - sts:AssumeRole
-        Policies:
-          - PolicyName: "InvokeAuthorizerFunction-${sls:stage}"
-            PolicyDocument:
-              Version: "2012-10-17"
-              Statement:
-                - Effect: "Allow"
-                  Action:
-                    - lambda:InvokeAsync
-                    - lambda:InvokeFunction
-                  Resource:
-                    Fn::GetAtt:
-                      - CustomAuthorizerLambdaFunction
-                      - Arn
+        FunctionName: !Ref CustomAuthorizerLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+        SourceArn:
+          Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*
