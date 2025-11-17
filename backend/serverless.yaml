@@ -37,6 +37,7 @@ functions:
       - http:
           path: auth/token/delete
           method: post
+          cors: true
 
   user-create:
     handler: user/create.lambda_handler
@@ -44,6 +45,7 @@ functions:
       - http:
           path: auth/user/create
           method: post
+          cors: true
 
   user-get:
     handler: user/get.lambda_handler
@@ -51,6 +53,7 @@ functions:
       - http:
           path: auth/user/get
           method: post
+          cors: true
 
   user-list:
     handler: user/list.lambda_handler
@@ -58,6 +61,7 @@ functions:
       - http:
           path: auth/user/list
           method: post
+          cors: true
 
   user-update:
     handler: user/update.lambda_handler
@@ -65,6 +69,7 @@ functions:
       - http:
           path: auth/user/update
           method: post
+          cors: true
 
   user-delete:
     handler: user/delete.lambda_handler
@@ -72,6 +77,7 @@ functions:
       - http:
           path: auth/user/delete
           method: post
+          cors: true
 
   incident-create:
     handler: incidents/create.lambda_handler
@@ -79,6 +85,7 @@ functions:
       - http:
           path: incident/create
           method: post
+          cors: true
 
   incident-get:
     handler: incidents/get.lambda_handler
@@ -86,6 +93,7 @@ functions:
       - http:
           path: incident/get
           method: post
+          cors: true
 
   incident-list:
     handler: incidents/list.lambda_handler
@@ -93,6 +101,7 @@ functions:
       - http:
           path: incident/list
           method: post
+          cors: true
 
   incident-update:
     handler: incidents/update.lambda_handler
@@ -100,6 +109,7 @@ functions:
       - http:
           path: incident/update
           method: post
+          cors: true
 
   incident-delete:
     handler: incidents/delete.lambda_handler
@@ -107,6 +117,7 @@ functions:
       - http:
           path: incident/delete
           method: post
+          cors: true
 
 resources:
   Resources:
@@ -178,14 +189,3 @@ resources:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-#    AuthorizerPermission:
-#      Type: AWS::Lambda::Permission
-#      Properties:
-#        FunctionName: !Ref CustomAuthorizerLambdaFunction
-#        Action: lambda:InvokeFunction
-#        Principal: voclabs/user4313077=anthony.aguilar@utec.edu.pe
-#        SourceArn:
-#          Fn::Sub:
-#            arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*
-#            #arn:aws:execute-api: us-east-1    : 407603477016    : z1ee016grf         /dev/POST/incident/list/
-#
