@@ -1,4 +1,4 @@
-﻿import { type FormEvent, useState } from "react";
+﻿import { type FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { useAuthContext } from "@/hooks/auth/AuthProvider";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  const { login, isAuthenticated } = useAuthContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -36,6 +36,9 @@ const LoginPage = () => {
       setIsSubmitting(false);
     }
   };
+  useEffect(() => {
+    if (isAuthenticated) navigate("/reports");
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -91,4 +94,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-

@@ -13,9 +13,10 @@ from hasPermission import has_permission
 
 
 def lambda_handler(event, context):
-    if not has_permission(event, context):
+    code = has_permission(event, context)
+    if code != 200:
         return {
-            "statusCode": 403,
+            "statusCode": code,
             "headers": CORS_HEADERS,
             "body": json.dumps({"message": "forbidden"}),
         }

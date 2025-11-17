@@ -90,7 +90,7 @@ def has_permission(event, context):
     auth_header = headers.get("Authorization") or headers.get("authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         print("Authorization header missing or invalid")
-        return False
+        return 401
 
     token = auth_header[len("Bearer ") :]
     method = (event.get("httpMethod") or "").upper()
@@ -100,11 +100,14 @@ def has_permission(event, context):
     mapping = ARN_ACTION.get(arn_key)
     if not mapping:
         print("No ARN mapping for key", arn_key)
-        return False
+        return 500
 
     resource, action = mapping
 
     data = get_token_data(token)
+    if not data:
+        return 401
+
     allowed = validate_permission(data.get("user"), resource, action)
     print("AUTHORIZED", allowed)
-    return allowed
+    return 200
