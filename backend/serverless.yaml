@@ -25,7 +25,7 @@ custom:
   protected: &protected
     cors: true
     authorizer:
-      type: REQUEST
+      #type: REQUEST
       name: customAuthorizer
       identitySource: method.request.header.Authorization
 
@@ -204,12 +204,14 @@ resources:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-
-    AuthorizerPermission:
-      Type: AWS::Lambda::Permission
-      Properties:
-        FunctionName: !Ref CustomAuthorizerLambdaFunction
-        Action: lambda:InvokeFunction
-        Principal: apigateway.amazonaws.com
-        SourceArn:
-          Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*
+#    AuthorizerPermission:
+#      Type: AWS::Lambda::Permission
+#      Properties:
+#        FunctionName: !Ref CustomAuthorizerLambdaFunction
+#        Action: lambda:InvokeFunction
+#        Principal: voclabs/user4313077=anthony.aguilar@utec.edu.pe
+#        SourceArn:
+#          Fn::Sub:
+#            arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*
+#            #arn:aws:execute-api: us-east-1    : 407603477016    : z1ee016grf         /dev/POST/incident/list/
+#
