@@ -45,12 +45,25 @@ Se creó una tabla principal:
   - Nivel de urgencia
   - Estado (pendiente, en atención, resuelto)
   - Usuario que reporta
-  - Fechas de creación y actualización
+  - Fechas registro.
 
 ## Frontend
-- Página de login.
-- Página para crear reportes.
-- Dashboard para visualizar datos de incidentes y usuarios en tiempo real.
-- Conexión WebSocket.
+Se desarrolló una interfaz web con las siguientes páginas:
+
+- **Página de Login**
+  Autenticación de estudiantes, administrativo y autoridades.
+
+- **Página para crear reportes**  
+  Formulario de registro de incidentes con tipo, ubicación, descripción y urgencia.
+
+- **Dashboard administrativo**  
+  Visualización de incidentes con opciones de filtrado y actualización del estado.
+
 
 ## Airflow
+Se utiliza Apache Airflow para la orquestación de procesos automáticos, como:
+- Clasificación automática de incidentes.
+- Envío de alertas a áreas responsables.
+- Generación periódica de reportes estadísticos.
+- Procesamiento batch de datos o limpieza de registros.
+
