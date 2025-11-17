@@ -44,7 +44,7 @@ ARN_ACTION = {
 }
 
 
-def has_permission(
+def validate_permission(
     user: User, resource: str, action: str, data: Optional[Dict] = None
 ) -> bool:
     """
@@ -105,6 +105,6 @@ def has_permission(event, context):
     resource, action = mapping
 
     data = get_token_data(token)
-    allowed = has_permission(data.get("user"), resource, action)
+    allowed = validate_permission(data.get("user"), resource, action)
     print("AUTHORIZED", allowed)
     return allowed
