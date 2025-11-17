@@ -2,7 +2,7 @@
 import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { useAuthContext } from "@/hooks/auth/AuthProvider";
+import { useAuthContext } from "@/hooks/auth/authContext";
 import { type Role } from "@/lib/auth_types";
 import { cn } from "@/lib/utils";
 
