@@ -208,6 +208,8 @@ resources:
     AuthorizerPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !Ref CustomAuthorizerLambdaFunction
         Action: lambda:InvokeFunction
+        FunctionName: !Ref CustomAuthorizerLambdaFunction
         Principal: apigateway.amazonaws.com
+        SourceArn:
+          Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*
