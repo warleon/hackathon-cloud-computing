@@ -94,7 +94,7 @@ def has_permission(event, context):
 
     token = auth_header[len("Bearer ") :]
     method = (event.get("httpMethod") or "").upper()
-    path = (event.get("path") or "").lstrip("/")
+    path = (event.get("path") or "").strip("/")
     arn_key = f"{method}/{path}"
 
     mapping = ARN_ACTION.get(arn_key)
