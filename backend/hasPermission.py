@@ -97,16 +97,16 @@ def lambda_handler(event, context):
 
     print("AUTHORIZED", allowed)
     if allowed:
-        response = generate_policy(token, "Allow", arn)
+        response = generate_policy("Allow", arn)
         print(response)
         return response
 
     raise Exception("Unauthorized")
 
 
-def generate_policy(principal_id, effect, resource):
+def generate_policy(effect, resource):
     return {
-        "principalId": principal_id,
+        "principalId": "apigateway.amazonaws.com",
         "policyDocument": {
             "Version": "2012-10-17",
             "Statement": [
