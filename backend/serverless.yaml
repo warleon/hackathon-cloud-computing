@@ -228,5 +228,5 @@ resources:
                     - lambda:InvokeFunction
                   Resource:
                     Fn::GetAtt:
-                      - customAuthorizer
+                      - CustomAuthorizerLambdaFunction
                       - Arn
