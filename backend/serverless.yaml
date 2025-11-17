@@ -26,7 +26,6 @@ custom:
     cors: true
     authorizer:
       name: customAuthorizer
-      type: TOKEN
       identitySource: method.request.header.Authorization
 
 functions:
