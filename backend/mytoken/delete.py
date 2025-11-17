@@ -2,9 +2,17 @@
 import json
 import os
 from _utils import tokens_table, split_token, CORS_HEADERS
+from hasPermission import has_permission
 
 
 def lambda_handler(event, context):
+    if not has_permission(event, context):
+        return {
+            "statusCode": 403,
+            "headers": CORS_HEADERS,
+            "body": json.dumps({"message": "forbidden"}),
+        }
+
     print(event)
     body = event.get("body")
     if isinstance(body, str):

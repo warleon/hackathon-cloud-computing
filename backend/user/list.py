@@ -5,9 +5,17 @@ from typing import Any, Dict
 from boto3.dynamodb.conditions import Attr
 
 from _utils import CORS_HEADERS, users_table
+from hasPermission import has_permission
 
 
 def lambda_handler(event, context):
+    if not has_permission(event, context):
+        return {
+            "statusCode": 403,
+            "headers": CORS_HEADERS,
+            "body": json.dumps({"message": "forbidden"}),
+        }
+
     body = event.get("body")
     if isinstance(body, str):
         body = json.loads(body)
@@ -40,7 +48,9 @@ def lambda_handler(event, context):
         limit = default_limit
     limit = min(limit, max_limit)
 
-    last_key: Dict[str, Any] | None = body.get("lastEvaluatedKey") or body.get("lastKey")
+    last_key: Dict[str, Any] | None = body.get("lastEvaluatedKey") or body.get(
+        "lastKey"
+    )
     if last_key is not None and not isinstance(last_key, dict):
         return {
             "statusCode": 400,

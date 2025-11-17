@@ -1,9 +1,17 @@
 # user/get.py
 import json
 from _utils import users_table, get_user, CORS_HEADERS
+from hasPermission import has_permission
 
 
 def lambda_handler(event, context):
+    if not has_permission(event, context):
+        return {
+            "statusCode": 403,
+            "headers": CORS_HEADERS,
+            "body": json.dumps({"message": "forbidden"}),
+        }
+
     body = event.get("body")
     if isinstance(body, str):
         body = json.loads(body)

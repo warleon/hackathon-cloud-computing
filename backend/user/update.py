@@ -8,9 +8,17 @@ from _utils import (
     VALID_USER_STATUSES,
     build_user_search_key,
 )
+from hasPermission import has_permission
 
 
 def lambda_handler(event, context):
+    if not has_permission(event, context):
+        return {
+            "statusCode": 403,
+            "headers": CORS_HEADERS,
+            "body": json.dumps({"message": "forbidden"}),
+        }
+
     body = event.get("body")
     if isinstance(body, str):
         body = json.loads(body)

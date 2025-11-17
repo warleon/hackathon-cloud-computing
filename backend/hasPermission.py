@@ -80,41 +80,31 @@ def has_permission(
     return False
 
 
-def allow(resource):
-    return {
-        "principalId": "voclabs/user4313077=anthony.aguilar@utec.edu.pe",
-        "policyDocument": {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Action": "execute-api:Invoke",
-                    "Effect": "Allow",
-                    "Resource": resource,
-                }
-            ],
-        },
-    }
+def has_permission(event, context):
+    """
+    event is expected to be a regular HTTP Lambda event
+    where Authorization header contains the token and
+    httpMethod/path determine the resource.
+    """
+    headers = event.get("headers") or {}
+    auth_header = headers.get("Authorization") or headers.get("authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        print("Authorization header missing or invalid")
+        return False
 
+    token = auth_header[len("Bearer ") :]
+    method = (event.get("httpMethod") or "").upper()
+    path = (event.get("path") or "").lstrip("/")
+    arn_key = f"{method}/{path}"
 
-def lambda_handler(event, context):
-    print(event)
-    token = event.get("authorizationToken")
-    arn = event.get("methodArn")
+    mapping = ARN_ACTION.get(arn_key)
+    if not mapping:
+        print("No ARN mapping for key", arn_key)
+        return False
 
-    token_prefix = "Bearer "
-    if token.startswith(token_prefix):
-        token = token[len(token_prefix) :]
-
-    arn_end = arn.split(STAGE, 1)[1]
-    resource, action = ARN_ACTION[arn_end.strip("/")]
+    resource, action = mapping
 
     data = get_token_data(token)
     allowed = has_permission(data.get("user"), resource, action)
-
     print("AUTHORIZED", allowed)
-    if allowed:
-        response = allow(arn)
-        print(response)
-        return response
-
-    raise Exception("Unauthorized")
+    return allowed

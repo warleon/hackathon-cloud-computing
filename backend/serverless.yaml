@@ -17,26 +17,12 @@ package:
   individually: true
   include:
     - "_utils.py"
-
-###########################
-# Reusable config
-###########################
-custom:
-  protected: &protected
-    cors: true
-    authorizer:
-      #type: REQUEST
-      name: customAuthorizer
-      identitySource: method.request.header.Authorization
+    - "hasPermission.py"
 
 functions:
   seed:
     handler: user/seed.lambda_handler
 
-  customAuthorizer:
-    handler: hasPermission.lambda_handler
-
-  # ---- PUBLIC ENDPOINT ----
   token-create:
     handler: mytoken/create.lambda_handler
     events:
@@ -45,14 +31,12 @@ functions:
           method: post
           cors: true
 
-  # ---- PROTECTED ENDPOINTS ----
   token-delete:
     handler: mytoken/delete.lambda_handler
     events:
       - http:
           path: auth/token/delete
           method: post
-          <<: *protected
 
   user-create:
     handler: user/create.lambda_handler
@@ -60,7 +44,6 @@ functions:
       - http:
           path: auth/user/create
           method: post
-          <<: *protected
 
   user-get:
     handler: user/get.lambda_handler
@@ -68,7 +51,6 @@ functions:
       - http:
           path: auth/user/get
           method: post
-          <<: *protected
 
   user-list:
     handler: user/list.lambda_handler
@@ -76,7 +58,6 @@ functions:
       - http:
           path: auth/user/list
           method: post
-          <<: *protected
 
   user-update:
     handler: user/update.lambda_handler
@@ -84,7 +65,6 @@ functions:
       - http:
           path: auth/user/update
           method: post
-          <<: *protected
 
   user-delete:
     handler: user/delete.lambda_handler
@@ -92,7 +72,6 @@ functions:
       - http:
           path: auth/user/delete
           method: post
-          <<: *protected
 
   incident-create:
     handler: incidents/create.lambda_handler
@@ -100,7 +79,6 @@ functions:
       - http:
           path: incident/create
           method: post
-          <<: *protected
 
   incident-get:
     handler: incidents/get.lambda_handler
@@ -108,7 +86,6 @@ functions:
       - http:
           path: incident/get
           method: post
-          <<: *protected
 
   incident-list:
     handler: incidents/list.lambda_handler
@@ -116,7 +93,6 @@ functions:
       - http:
           path: incident/list
           method: post
-          <<: *protected
 
   incident-update:
     handler: incidents/update.lambda_handler
@@ -124,7 +100,6 @@ functions:
       - http:
           path: incident/update
           method: post
-          <<: *protected
 
   incident-delete:
     handler: incidents/delete.lambda_handler
@@ -132,7 +107,6 @@ functions:
       - http:
           path: incident/delete
           method: post
-          <<: *protected
 
 resources:
   Resources:

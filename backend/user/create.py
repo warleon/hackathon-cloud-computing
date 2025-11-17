@@ -9,9 +9,17 @@ from _utils import (
     VALID_USER_STATUSES,
     build_user_search_key,
 )
+from hasPermission import has_permission
 
 
 def lambda_handler(event, context):
+    if not has_permission(event, context):
+        return {
+            "statusCode": 403,
+            "headers": CORS_HEADERS,
+            "body": json.dumps({"message": "forbidden"}),
+        }
+
     body = event.get("body")
     if isinstance(body, str):
         body = json.loads(body)
@@ -64,7 +72,11 @@ def lambda_handler(event, context):
             Item=user_item, ConditionExpression="attribute_not_exists(id)"
         )
         # don't include passwordHash/salt in response
-        return {"statusCode": 201, "body": json.dumps(user_item), "headers": CORS_HEADERS}
+        return {
+            "statusCode": 201,
+            "body": json.dumps(user_item),
+            "headers": CORS_HEADERS,
+        }
     except Exception as e:
         return {
             "statusCode": 400,

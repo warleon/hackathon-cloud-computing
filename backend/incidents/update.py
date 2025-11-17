@@ -8,9 +8,17 @@ from _utils import (
     VALID_INCIDENT_STATES,
     build_incident_search_key,
 )
+from hasPermission import has_permission
 
 
 def lambda_handler(event, context):
+    if not has_permission(event, context):
+        return {
+            "statusCode": 403,
+            "headers": CORS_HEADERS,
+            "body": json.dumps({"message": "forbidden"}),
+        }
+
     body = event.get("body")
     if isinstance(body, str):
         body = json.loads(body)
@@ -75,7 +83,9 @@ def lambda_handler(event, context):
         }
 
     # Need latest values to refresh searchKey
-    current = incidents_table.get_item(Key={"tenant": tenant, "id": incident_id}).get("Item")
+    current = incidents_table.get_item(Key={"tenant": tenant, "id": incident_id}).get(
+        "Item"
+    )
     if not current:
         return {
             "statusCode": 404,
