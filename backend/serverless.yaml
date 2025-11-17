@@ -25,6 +25,7 @@ custom:
   protected: &protected
     cors: true
     authorizer:
+      type: REQUEST
       name: customAuthorizer
       identitySource: method.request.header.Authorization
 
