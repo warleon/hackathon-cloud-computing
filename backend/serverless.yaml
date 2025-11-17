@@ -28,7 +28,6 @@ custom:
       name: customAuthorizer
       type: TOKEN
       identitySource: method.request.header.Authorization
-    authorizationType: CUSTOM
 
 functions:
   seed:
