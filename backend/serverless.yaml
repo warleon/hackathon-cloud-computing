@@ -218,7 +218,7 @@ resources:
               Action:
                 - sts:AssumeRole
         Policies:
-          - PolicyName: "InvokeAuthorizerFunction-${self:custom.stage}"
+          - PolicyName: "InvokeAuthorizerFunction-${sls:stage}"
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
