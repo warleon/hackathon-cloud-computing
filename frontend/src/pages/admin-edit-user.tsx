@@ -83,7 +83,7 @@ const AdminEditUserPage = () => {
       if (formState.password.trim()) {
         payload.password = formState.password.trim();
       }
-      return request(ENDPOINTS.USER.UPDATE, payload, { method: "PUT" });
+      return request(ENDPOINTS.USER.UPDATE, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });

@@ -82,11 +82,7 @@ export function useAuth() {
   // REQUEST WRAPPER
   // ---------------------------
   const request = useCallback(
-    async (
-      url: string,
-      data?: unknown,
-      options?: { method?: "GET" | "POST" | "PUT" | "DELETE" }
-    ) => {
+    async (url: string, data?: unknown, options?: { method?: "POST" }) => {
       const method = options?.method ?? "POST";
       try {
         const res = await axios.request({
@@ -96,6 +92,7 @@ export function useAuth() {
         });
         return res.data;
       } catch (err: any) {
+        console.error(err);
         const status = err.response?.status;
         if (status === 401) {
           logout(); // auto-logout if expired or invalid token

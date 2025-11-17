@@ -3,7 +3,7 @@ import type { Incident } from "./incident_types";
 export type { Incident, IncidentState } from "./incident_types";
 
 export type Action = "view" | "create" | "update" | "delete";
-export type Role = "reporter" | "admin" | "attendant";
+export type Role = "reporter" | "admin" | "attendant" | "user";
 
 export type User = {
   tenant: string;
