@@ -82,13 +82,10 @@ export function useAuth() {
   // REQUEST WRAPPER
   // ---------------------------
   const request = useCallback(
-    async (url: string, data?: unknown, options?: { method?: "POST" }) => {
-      const method = options?.method ?? "POST";
+    async (url: string, data?: unknown) => {
       try {
-        const res = await axios.request({
-          url,
-          method,
-          data,
+        const res = await axios.post(url, data, {
+          headers: { Authorization: `Bearer ${token}` },
         });
         return res.data;
       } catch (err: any) {
@@ -97,18 +94,10 @@ export function useAuth() {
         if (status === 401) {
           logout(); // auto-logout if expired or invalid token
         }
-        if (status === 403) {
-          return (
-            err.response?.data ?? {
-              statusCode: 403,
-              message: "Acceso denegado",
-            }
-          );
-        }
         throw err;
       }
     },
-    [logout]
+    [logout, token]
   );
 
   // Attach token & auto-logout on 401
