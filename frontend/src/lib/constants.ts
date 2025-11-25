@@ -1,7 +1,7 @@
 // TODO deberian ser env vars
 
 export const URL_BASE =
-  "https://z1ee016grf.execute-api.us-east-1.amazonaws.com";
+  "https://oaoj7zgr23.execute-api.us-east-1.amazonaws.com";
 const ENV = "dev";
 
 export const ENDPOINTS = {
