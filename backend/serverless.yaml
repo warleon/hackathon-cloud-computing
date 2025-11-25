@@ -6,7 +6,7 @@ provider:
   region: us-east-1
   timeout: 29
   iam:
-    role: arn:aws:iam::407603477016:role/LabRole
+    role: arn:aws:iam::074645577762:role/LabRole
   environment:
     USERS_TABLE: ${self:service}-users-${sls:stage}
     TOKENS_TABLE: ${self:service}-tokens-${sls:stage}
